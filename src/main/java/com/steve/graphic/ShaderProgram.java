@@ -78,6 +78,16 @@ public class ShaderProgram {
     }
 
     /**
+     * Retrieves the shader program identifier.
+     *
+     * @return the identifier of the shader program.
+     * @since 1.0
+     */
+    public int get() {
+        return shaderProgram;
+    }
+
+    /**
      * Delete program, and release memory.
      * 
      * @since 1.0

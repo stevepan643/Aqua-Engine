@@ -1,11 +1,17 @@
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_FRONT_AND_BACK;
+import static org.lwjgl.opengl.GL11.GL_LINE;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glPolygonMode;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20.glUniform4f;
+import static org.lwjgl.opengl.GL20.glUseProgram;
 
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
@@ -54,6 +60,8 @@ public class Main {
 
         mesh = new Mesh(vertices, indices);
 
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
         while (!window.isShouldClose()) {
             processInput(window.get());
 
@@ -61,6 +69,12 @@ public class Main {
             glClear(GL_COLOR_BUFFER_BIT);
 
             shaderProgram.use();
+
+            double time = glfwGetTime();
+            double greenValue = Math.sin(time) / 2.0 + 0.5;
+            int uniform = glGetUniformLocation(shaderProgram.get(), "ourColor");
+            glUniform4f(uniform, 0, (float) greenValue, 0, 0);
+
             mesh.render();
 
             window.swapBuffers();
