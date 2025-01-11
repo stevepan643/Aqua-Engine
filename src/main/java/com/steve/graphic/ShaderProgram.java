@@ -1,6 +1,5 @@
 package com.steve.graphic;
 
-import static org.lwjgl.opengl.GL20.GL_ATTACHED_SHADERS;
 import static org.lwjgl.opengl.GL20.GL_LINK_STATUS;
 import static org.lwjgl.opengl.GL20.glAttachShader;
 import static org.lwjgl.opengl.GL20.glCreateProgram;

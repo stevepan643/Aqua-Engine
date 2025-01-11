@@ -1,13 +1,11 @@
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
-import static org.lwjgl.system.MemoryUtil.*;
 
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
