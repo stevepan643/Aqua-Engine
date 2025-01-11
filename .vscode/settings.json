@@ -1,0 +1,31 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "java.debug.settings.vmArgs": "-XstartOnFirstThread",
+  "java.debug.settings.onBuildFailureProceed": true,
+  "cSpell.words": [
+    "glfw",
+    "lwjgl",
+    "OPENGL",
+    "Programi",
+    "Shaderi"
+  ],
+  "glsllint.additionalStageAssociations": {
+    ".vert": "vert", // for a vertex shader
+    ".vs": "vert", // for a vertex shader
+    ".frag": "frag", // for a fragment shader
+    ".fs": "frag", // for a fragment shader
+    ".gs": "geom", // for a geometry shader
+    ".geom": "geom", // for a geometry shader
+    ".comp": "comp", // for a compute shader
+    ".tesc": "tesc", // for a tessellation control shader
+    ".tese": "tese", // for a tessellation evaluation shader
+    ".rgen": "rgen", // for a ray generation shader
+    ".rint": "rint", // for a ray intersection shader
+    ".rahit": "rahit", // for a ray any hit shader
+    ".rchit": "rchit", // for a ray closest shader
+    ".rmiss": "rmiss", // for a ray miss shader
+    ".rcall": "rcall", // for a ray callable shader
+    ".mesh": "mesh", // for a mesh shader
+    ".task": "task" // for a task shader
+  }
+}
