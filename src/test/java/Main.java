@@ -17,9 +17,13 @@ import com.steve.platform.Window;
 public class Main {
     public static final float vertices[] = {
             0.5f, 0.5f, 0.0f, // top right
+            1, 1, 1,
             0.5f, -0.5f, 0.0f, // bottom right
+            0, 1, 0,
             -0.5f, -0.5f, 0.0f, // bottom left
-            -0.5f, 0.5f, 0.0f // top left
+            0, 0, 1,
+            -0.5f, 0.5f, 0.0f, // top left
+            1, 0 ,0
     };
 
     public static final int indices[] = {
@@ -54,7 +58,7 @@ public class Main {
 
         shaderProgram.link();
 
-        mesh = new Mesh(vertices, indices);
+        mesh = Mesh.createMeshWithColor(vertices, indices);
 
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -66,10 +70,10 @@ public class Main {
 
             shaderProgram.use();
 
-            double time = glfwGetTime();
-            double greenValue = Math.sin(time) / 2.0 + 0.5;
-            int uniform = glGetUniformLocation(shaderProgram.get(), "ourColor");
-            glUniform4f(uniform, 0, (float) greenValue, 0, 0);
+            // double time = glfwGetTime();
+            // double greenValue = Math.sin(time) / 2.0 + 0.5;
+            // int uniform = glGetUniformLocation(shaderProgram.get(), "ourColor");
+            // glUniform4f(uniform, 0, (float) greenValue, 0, 0);
 
             mesh.render();
 
