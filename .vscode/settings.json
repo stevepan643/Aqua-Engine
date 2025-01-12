@@ -4,6 +4,7 @@
   "java.debug.settings.onBuildFailureProceed": true,
   "cSpell.words": [
     "glfw",
+    "learnopengl",
     "lwjgl",
     "OPENGL",
     "Programi",
