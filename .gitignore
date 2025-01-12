@@ -3,3 +3,4 @@
 target/*
 src/main/resources/*
 src/test/*
+src/test/java/*
