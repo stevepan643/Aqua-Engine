@@ -7,9 +7,11 @@
     "learnopengl",
     "lwjgl",
     "OPENGL",
+    "Parameteri",
     "Programi",
     "Shaderi",
-    "stbi"
+    "stbi",
+    "Storei"
   ],
   "glsllint.additionalStageAssociations": {
     ".vert": "vert", // for a vertex shader
