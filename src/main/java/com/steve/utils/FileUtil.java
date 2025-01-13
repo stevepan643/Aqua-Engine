@@ -11,8 +11,15 @@ import java.nio.file.Paths;
  * @version 1.0
  */
 public class FileUtil {
-    public static String read(String filepath) {
 
+    /**
+     * Reads the content of a file specified by the given file path.
+     *
+     * @param filepath the path to the file to be read
+     * @return the content of the file as a String, or an empty string if
+     *         an error occurs
+     */
+    public static String read(String filepath) {
         try {
             return Files.readString(Paths.get(filepath));
         } catch (IOException e) {

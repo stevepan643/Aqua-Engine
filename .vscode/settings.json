@@ -4,10 +4,12 @@
   "java.debug.settings.onBuildFailureProceed": true,
   "cSpell.words": [
     "glfw",
+    "learnopengl",
     "lwjgl",
     "OPENGL",
     "Programi",
-    "Shaderi"
+    "Shaderi",
+    "stbi"
   ],
   "glsllint.additionalStageAssociations": {
     ".vert": "vert", // for a vertex shader
