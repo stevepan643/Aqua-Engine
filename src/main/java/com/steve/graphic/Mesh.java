@@ -11,7 +11,6 @@ import static org.lwjgl.opengl.GL15.glBindBuffer;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glDeleteBuffers;
 import static org.lwjgl.opengl.GL15.glGenBuffers;
-import static org.lwjgl.opengl.GL20.GL_FLOAT_VEC3;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
@@ -33,6 +32,8 @@ public class Mesh {
     private int ebo; // Element Buffer Object
 
     public static float defaultColor[] = { 0.5f, 0.5f, 0.5f };
+
+    private final int VERTEX_SIZE = 8;
 
     /**
      * Create a mesh by vertices, color and indices.
@@ -91,6 +92,11 @@ public class Mesh {
         return createMeshWithColor(newVertices, indices);
     }
 
+    public static Mesh createMeshWithColorAndText(
+            float vertices[], int indices[]) {
+        return new Mesh(vertices, indices);
+    }
+
     /**
      * Load into render buffer.
      * 
@@ -110,12 +116,16 @@ public class Mesh {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
         glVertexAttribPointer(0, 3, GL_FLOAT,
-                false, 6 * Float.BYTES, 0);
+                false, VERTEX_SIZE * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
 
         glVertexAttribPointer(1, 3, GL_FLOAT,
-                false, 6 * Float.BYTES, 3 * Float.BYTES);
+                false, VERTEX_SIZE * Float.BYTES, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
+
+        glVertexAttribPointer(2, 2, GL_FLOAT, 
+                false, VERTEX_SIZE * Float.BYTES, 6 * Float.BYTES);
+                glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);

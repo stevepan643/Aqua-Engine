@@ -9,21 +9,21 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniform4f;
 
+import java.io.IOException;
+
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
+import com.steve.graphic.Texture;
 import com.steve.platform.Window;
 
 public class Main {
     public static final float vertices[] = {
-            0.5f, 0.5f, 0.0f, // top right
-            1, 1, 1,
-            0.5f, -0.5f, 0.0f, // bottom right
-            0, 1, 0,
-            -0.5f, -0.5f, 0.0f, // bottom left
-            0, 0, 1,
-            -0.5f, 0.5f, 0.0f, // top left
-            1, 0 ,0
+            // positions // colors // texture coords
+            0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.25f, 0.0f, // top right
+            0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.25f, 0.25f, // bottom right
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.25f, // bottom left
+            -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f // top left
     };
 
     public static final int indices[] = {
@@ -37,7 +37,7 @@ public class Main {
     public static void main(String[] args) {
 
         Window window = new Window(
-                800, 600, "Test Game");
+                800, 800, "Test Game");
 
         // If window's size is changing, callback framebuffer_size_callback.
         glfwSetFramebufferSizeCallback(
@@ -58,7 +58,14 @@ public class Main {
 
         shaderProgram.link();
 
-        mesh = Mesh.createMeshWithColor(vertices, indices);
+        Texture texture = null;
+        try {
+            texture = new Texture("src/main/resources/textures.png");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        mesh = Mesh.createMeshWithColorAndText(vertices, indices);
 
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
@@ -74,6 +81,8 @@ public class Main {
             // double greenValue = Math.sin(time) / 2.0 + 0.5;
             // int uniform = glGetUniformLocation(shaderProgram.get(), "ourColor");
             // glUniform4f(uniform, 0, (float) greenValue, 0, 0);
+
+            texture.use();
 
             mesh.render();
 

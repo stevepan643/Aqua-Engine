@@ -8,7 +8,8 @@
     "lwjgl",
     "OPENGL",
     "Programi",
-    "Shaderi"
+    "Shaderi",
+    "stbi"
   ],
   "glsllint.additionalStageAssociations": {
     ".vert": "vert", // for a vertex shader
