@@ -13,10 +13,15 @@ import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniform2f;
 import static org.lwjgl.opengl.GL20.glUniform3f;
 import static org.lwjgl.opengl.GL20.glUniform4f;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import java.nio.FloatBuffer;
 import java.util.HashMap;
+
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryStack;
 
 /**
  * Shader program.
@@ -160,6 +165,24 @@ public class ShaderProgram {
             default:
                 throw new IllegalArgumentException("Only float arrays of length 1 to 4 are supported.");
         }
+    }
+
+    /**
+     * Sets the value of a 4x4 matrix uniform in the shader program.
+     *
+     * @param uniform the name of the uniform variable in the shader program
+     * @param value the 4x4 matrix to set the uniform to
+     * @since 1.1
+     */
+    public void setMat4f(String uniform, Matrix4f value) {
+        FloatBuffer fb = MemoryStack
+                .stackPush()
+                .mallocFloat(16);
+        value.get(fb);
+        glUniformMatrix4fv(
+                glGetUniformLocation(shaderProgram, uniform),
+                false,
+                fb);
     }
 
     /**

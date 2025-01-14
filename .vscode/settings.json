@@ -4,6 +4,9 @@
   "java.debug.settings.onBuildFailureProceed": true,
   "cSpell.words": [
     "glfw",
+    "hackoeur",
+    "jglm",
+    "joml",
     "learnopengl",
     "lwjgl",
     "OPENGL",
