@@ -2,23 +2,24 @@ package com.steve.graphic;
 
 import static org.lwjgl.opengl.GL11.GL_RGBA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.GL_UNPACK_ALIGNMENT;
 import static org.lwjgl.opengl.GL11.GL_UNSIGNED_BYTE;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
-import static org.lwjgl.opengl.GL11.GL_LINEAR;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL14.GL_MIRRORED_REPEAT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
+import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL11.glGenTextures;
 import static org.lwjgl.opengl.GL11.glPixelStorei;
 import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 import static org.lwjgl.stb.STBImage.stbi_image_free;
 import static org.lwjgl.stb.STBImage.stbi_load;
+import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -59,6 +60,13 @@ public class Texture {
 
     private int texture;
 
+    private static int count = 0;
+    public int id;
+
+    static {
+        stbi_set_flip_vertically_on_load(true);
+    }
+
     /**
      * Constructs a new Texture object by loading an image from the
      * specified file path.
@@ -68,6 +76,9 @@ public class Texture {
      * @since 1.0
      */
     public Texture(String filepath) throws IOException {
+        id = count;
+        count++;
+
         texture = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -80,7 +91,8 @@ public class Texture {
             throw new IOException("Can't open file:" + filepath);
         }
 
-        System.out.println(filepath + ": " + width[0] + "x" + height[0] + ", " + nrChannels[0]);
+        System.out.println(filepath + ": " + width[0] + "x" + height[0] +
+                ", " + nrChannels[0] + ", " + id);
         glPixelStorei(GL_TEXTURE_2D, 1);
         glTexImage2D(
                 GL_TEXTURE_2D, 0, GL_RGBA,
@@ -90,7 +102,14 @@ public class Texture {
         stbi_image_free(data);
     }
 
+    /**
+     * Binds the texture for use in OpenGL rendering.
+     * This method activates the texture unit specified by the texture ID
+     * and binds the texture to the GL_TEXTURE_2D target.
+     * @since 1.0
+     */
     public void use() {
+        glActiveTexture(GL_TEXTURE0 + id);
         glBindTexture(GL_TEXTURE_2D, texture);
     }
 }
