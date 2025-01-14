@@ -1,5 +1,5 @@
 *.log
 *.DS_Store
 target/*
-src/main/resources/*
+# src/main/resources/*
 .VSCodeCounter/*
