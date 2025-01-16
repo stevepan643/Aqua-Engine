@@ -7,10 +7,12 @@ out vec3 color;
 out vec2 texCoord;
 
 uniform mat4 proj;
+uniform mat4 view;
+uniform mat4 model;
 
 void main()
 {
-   gl_Position = proj * vec4(aPos, 1.0);
+   gl_Position = proj * view * model * vec4(aPos, 1.0);
    color = aColor;
    texCoord = aTexCoord;
 }

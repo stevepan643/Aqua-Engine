@@ -22,6 +22,7 @@ import java.util.HashMap;
 
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  * Shader program.
@@ -171,7 +172,7 @@ public class ShaderProgram {
      * Sets the value of a 4x4 matrix uniform in the shader program.
      *
      * @param uniform the name of the uniform variable in the shader program
-     * @param value the 4x4 matrix to set the uniform to
+     * @param value   the 4x4 matrix to set the uniform to
      * @since 1.1
      */
     public void setMat4f(String uniform, Matrix4f value) {

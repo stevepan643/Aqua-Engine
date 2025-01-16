@@ -1,15 +1,14 @@
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.opengl.GL11.glViewport;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 
 import java.io.IOException;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
@@ -20,15 +19,66 @@ import com.steve.platform.Window;
 public class Main {
     public static float vertices[] = {
             // positions // colors // texture coords
-            0.5f, 0.5f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
-            0.5f, -0.5f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
-            -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-            -0.5f, 0.5f, -1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // top left
+            // 0
+            0.5f, 0.5f, 0.5f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 1.0f, // top front right
+            // 1
+            0.5f, -0.5f, 0.5f,
+            0.0f, 1.0f, 0.0f,
+            1.0f, 0.0f, // bottom front right
+            // 2
+            -0.5f, -0.5f, 0.5f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, // bottom front left
+            // 3
+            -0.5f, 0.5f, 0.5f,
+            1.0f, 1.0f, 0.0f,
+            0.0f, 1.0f, // top front left
+            // 4
+            0.5f, 0.5f, -0.5f,
+            1.0f, 0.0f, 0.0f,
+            1.0f, 1.0f, // top back right
+            // 5
+            0.5f, -0.5f, -0.5f,
+            0.0f, 1.0f, 0.0f,
+            1.0f, 0.0f, // bottom back right
+            // 6
+            -0.5f, -0.5f, -0.5f,
+            0.0f, 0.0f, 1.0f,
+            0.0f, 0.0f, // bottom back left
+            // 7
+            -0.5f, 0.5f, -0.5f,
+            1.0f, 1.0f, 0.0f,
+            0.0f, 1.0f // top back left
+
     };
 
     public static final int indices[] = {
-            0, 1, 3, // first triangle
-            1, 2, 3 // second triangle
+            // top face
+            0, 1, 3,
+            1, 2, 3,
+
+            // bottom face
+            4, 5, 7,
+            5, 6, 7,
+
+            // left face
+            3, 2, 7,
+            2, 6, 7,
+
+            // right face
+            0, 1, 5,
+            4, 5, 0,
+
+            // back face
+            0, 3, 4,
+            3, 4, 7,
+
+            // front face
+            1, 2, 5,
+            6, 5, 2,
+
     };
 
     public static ShaderProgram shaderProgram;
@@ -39,6 +89,8 @@ public class Main {
 
     public static Matrix4f proj;
     public static boolean isChanged = false;
+
+    public static Matrix4f view;
 
     public static void main(String[] args) {
 
@@ -76,6 +128,7 @@ public class Main {
         mesh = Mesh.createMeshWithColorAndText(vertices, indices);
 
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glEnable(GL_DEPTH_TEST);
 
         shaderProgram.use();
         shaderProgram.setInt("texture1", 0);
@@ -86,11 +139,19 @@ public class Main {
                 (float) width / height, 0.01f, 100f);
         shaderProgram.setMat4f("proj", proj);
 
+        view = new Matrix4f().identity();
+        shaderProgram.setMat4f("view", view);
+
+        mesh.getTransform()
+                .translate(0.0f, 0.0f, -2.0f)
+                .rotateX((float) Math.toRadians(-55.0f));
+        shaderProgram.setMat4f("model", mesh.getTransform());
+
         while (!window.isShouldClose()) {
             processInput(window.get());
 
             glClearColor(0f, 0f, 0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // double time = glfwGetTime();
             // double greenValue = Math.sin(time) / 2.0 + 0.5;
@@ -130,6 +191,13 @@ public class Main {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
             glfwSetWindowShouldClose(window, true);
         }
+    }
+
+    public static float getFPS() {
+        float framePerSecond = 0.0f;
+        float lastTime = 0.0f;
+        // float currentTime = GetTickTime
+        return 0;
     }
 
     public static void cleanup() {
