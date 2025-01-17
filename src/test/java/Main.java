@@ -113,10 +113,9 @@ public class Main {
         shaderProgram.link();
 
         Texture texture1 = null;
-        Texture texture2 = null;
         try {
             texture1 = new Texture("src/main/resources/textures.png");
-            texture2 = new Texture("src/main/resources/macintosh.png");
+            
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,10 +128,7 @@ public class Main {
         shaderProgram.use();
         Uniform<Integer> textureUniform1 = new Uniform<Integer>(
                 "texture1", 0);
-        Uniform<Integer> textureUniform2 = new Uniform<Integer>(
-                "texture2", 1);
         shaderProgram.addUniform(textureUniform1);
-        shaderProgram.addUniform(textureUniform2);
 
         Uniform<Matrix4f> projUniform = new Uniform<Matrix4f>(
                 "proj",
@@ -164,7 +160,6 @@ public class Main {
             // glUniform4f(uniform, 0, (float) greenValue, 0, 0);
 
             texture1.use();
-            texture2.use();
 
             if (isChanged) {
                 projUniform.getValue()
