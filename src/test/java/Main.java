@@ -7,13 +7,12 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import java.io.IOException;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
 import com.steve.graphic.Texture;
+import com.steve.graphic.Uniform;
 import com.steve.platform.Window;
 
 public class Main {
@@ -87,10 +86,7 @@ public class Main {
     public static int width = 800;
     public static int height = 600;
 
-    public static Matrix4f proj;
     public static boolean isChanged = false;
-
-    public static Matrix4f view;
 
     public static void main(String[] args) {
 
@@ -131,21 +127,30 @@ public class Main {
         glEnable(GL_DEPTH_TEST);
 
         shaderProgram.use();
-        shaderProgram.setInt("texture1", 0);
-        shaderProgram.setInt("texture2", 1);
+        Uniform<Integer> textureUniform1 = new Uniform<Integer>(
+                "texture1", 0);
+        Uniform<Integer> textureUniform2 = new Uniform<Integer>(
+                "texture2", 1);
+        shaderProgram.addUniform(textureUniform1);
+        shaderProgram.addUniform(textureUniform2);
 
-        proj = new Matrix4f().perspective(
-                (float) Math.toRadians(60.0f),
-                (float) width / height, 0.01f, 100f);
-        shaderProgram.setMat4f("proj", proj);
+        Uniform<Matrix4f> projUniform = new Uniform<Matrix4f>(
+                "proj",
+                new Matrix4f().perspective(
+                        (float) Math.toRadians(60.0f),
+                        (float) width / height, 0.01f, 100f));
+        shaderProgram.addUniform(projUniform);
 
-        view = new Matrix4f().identity();
-        shaderProgram.setMat4f("view", view);
+        Uniform<Matrix4f> viewUniform = new Uniform<Matrix4f>(
+                "view", new Matrix4f());
+        shaderProgram.addUniform(viewUniform);
 
         mesh.getTransform()
                 .translate(0.0f, 0.0f, -2.0f)
                 .rotateX((float) Math.toRadians(-55.0f));
-        shaderProgram.setMat4f("model", mesh.getTransform());
+        Uniform<Matrix4f> modelUniform = new Uniform<Matrix4f>(
+                "model", mesh.getTransform());
+        shaderProgram.addUniform(modelUniform);
 
         while (!window.isShouldClose()) {
             processInput(window.get());
@@ -162,10 +167,12 @@ public class Main {
             texture2.use();
 
             if (isChanged) {
-                proj = new Matrix4f().perspective(
-                        (float) Math.toRadians(60.0f),
-                        (float) width / height, 0.01f, 100f);
-                shaderProgram.setMat4f("proj", proj);
+                projUniform.getValue()
+                        .identity()
+                        .perspective(
+                                (float) Math.toRadians(60.0f),
+                                (float) width / height, 0.01f, 100f);
+                projUniform.update();
                 isChanged = false;
             }
 
@@ -194,10 +201,7 @@ public class Main {
     }
 
     public static float getFPS() {
-        float framePerSecond = 0.0f;
-        float lastTime = 0.0f;
-        // float currentTime = GetTickTime
-        return 0;
+        return (float) (1 / glfwGetTime());
     }
 
     public static void cleanup() {

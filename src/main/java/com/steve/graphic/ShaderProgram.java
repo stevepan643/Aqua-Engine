@@ -8,21 +8,10 @@ import static org.lwjgl.opengl.GL20.glDetachShader;
 import static org.lwjgl.opengl.GL20.glGetProgrami;
 import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glLinkProgram;
-import static org.lwjgl.opengl.GL20.glUniform1f;
-import static org.lwjgl.opengl.GL20.glUniform1i;
-import static org.lwjgl.opengl.GL20.glUniform2f;
-import static org.lwjgl.opengl.GL20.glUniform3f;
-import static org.lwjgl.opengl.GL20.glUniform4f;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL20.glUseProgram;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
-import java.nio.FloatBuffer;
 import java.util.HashMap;
-
-import org.joml.Matrix4f;
-import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 /**
  * Shader program.
@@ -99,91 +88,10 @@ public class ShaderProgram {
         return shaderProgram;
     }
 
-    /**
-     * Sets a boolean uniform variable in the shader program.
-     *
-     * @param uniform the name of the uniform variable in the shader program.
-     * @param value   the boolean value to set:
-     *                </p>
-     *                {@code true} will be converted to {@code 1},
-     *                </p>
-     *                {@code false} to {@code 0}.
-     * @since 1.1
-     */
-    public void setBool(String uniform, boolean value) {
-        glUniform1i(glGetUniformLocation(shaderProgram, uniform), value ? 1 : 0);
-    }
-
-    /**
-     * Sets a integer uniform variable in the shader program.
-     *
-     * @param uniform the name of the uniform variable in the shader program.
-     * @param value   the int value to set.
-     * @since 1.1
-     */
-    public void setInt(String uniform, int value) {
-        glUniform1i(glGetUniformLocation(shaderProgram, uniform), value);
-    }
-
-    /**
-     * Sets a float uniform variable in the shader program.
-     *
-     * @param uniform the name of the uniform variable in the shader program.
-     * @param value   the float value to set.
-     * @since 1.1
-     */
-    public void setFloat(String uniform, float value) {
-        glUniform1f(glGetUniformLocation(shaderProgram, uniform), value);
-    }
-
-    /**
-     * Sets a float array uniform variable in the shader program.
-     *
-     * @param uniform the name of the uniform variable in the shader program.
-     * @param values  the float array to set.
-     *                The array length must be between 1 and 4.
-     * @since 1.1
-     */
-    public void setFloats(String uniform, float[] values) {
-        int size = values.length;
-
-        switch (size) {
-            case 1:
-                setFloat(uniform, values[0]);
-                break;
-            case 2:
-                glUniform2f(glGetUniformLocation(shaderProgram, uniform),
-                        values[0], values[1]);
-                break;
-            case 3:
-                glUniform3f(glGetUniformLocation(shaderProgram, uniform),
-                        values[0], values[1], values[2]);
-                break;
-            case 4:
-                glUniform4f(glGetUniformLocation(shaderProgram, uniform),
-                        values[0], values[1], values[2], values[3]);
-                break;
-            default:
-                throw new IllegalArgumentException("Only float arrays of length 1 to 4 are supported.");
-        }
-    }
-
-    /**
-     * Sets the value of a 4x4 matrix uniform in the shader program.
-     *
-     * @param uniform the name of the uniform variable in the shader program
-     * @param value   the 4x4 matrix to set the uniform to
-     * @since 1.1
-     */
-    public void setMat4f(String uniform, Matrix4f value) {
-        FloatBuffer fb = MemoryStack
-                .stackPush()
-                .mallocFloat(16);
-        value.get(fb);
-        glUniformMatrix4fv(
-                glGetUniformLocation(shaderProgram, uniform),
-                false,
-                fb);
+    public void addUniform(Uniform<?> uniform) {
+        uniform.setLocation(
+                glGetUniformLocation(shaderProgram, uniform.getName()));
+        uniform.update();
     }
 
     /**
