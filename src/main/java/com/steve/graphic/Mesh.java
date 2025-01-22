@@ -17,6 +17,8 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glGenVertexArrays;
 
+import org.joml.Matrix4f;
+
 /**
  * This class saved mesh's vertices, indices and etc.
  * 
@@ -33,6 +35,8 @@ public class Mesh {
 
     public static float defaultColor[] = { 0.5f, 0.5f, 0.5f };
 
+    private Matrix4f model;
+
     private final int VERTEX_SIZE = 8;
 
     /**
@@ -45,6 +49,11 @@ public class Mesh {
     private Mesh(float vertices[], int indices[]) {
         this.vertices = vertices;
         this.indices = indices;
+        this.model = new Matrix4f(
+                1.0f, 0.0f, 0.0f, 0.0f,
+                0.0f, 1.0f, 0.0f, 0.0f,
+                0.0f, 0.0f, 1.0f, 0.0f,
+                0.0f, 0.0f, 0.0f, 1.0f);
 
         loadMesh();
     }
@@ -123,9 +132,9 @@ public class Mesh {
                 false, VERTEX_SIZE * Float.BYTES, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
 
-        glVertexAttribPointer(2, 2, GL_FLOAT, 
+        glVertexAttribPointer(2, 2, GL_FLOAT,
                 false, VERTEX_SIZE * Float.BYTES, 6 * Float.BYTES);
-                glEnableVertexAttribArray(2);
+        glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
@@ -151,6 +160,10 @@ public class Mesh {
      */
     public int getVao() {
         return vao;
+    }
+
+    public Matrix4f getTransform() {
+        return model;
     }
 
     /**
