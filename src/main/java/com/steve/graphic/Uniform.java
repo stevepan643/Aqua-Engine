@@ -32,15 +32,21 @@ public class Uniform<T> {
 
     private int location;
 
+    private FloatBuffer buffer;
+
+    private final MemoryStack stack;
+
     public Uniform(String name, T value) {
         this.value = value;
         this.name = name;
+        this.stack = MemoryStack.stackPush();
         this.type = check();
         System.out.println(type);
     }
 
     private Type check() {
         if (value instanceof Matrix4fc) {
+            buffer = stack.mallocFloat(16);
             return Type.mat4f;
         } else if (value instanceof Integer) {
             return Type.i1;
@@ -156,11 +162,8 @@ public class Uniform<T> {
      * @since 1.1
      */
     private void setMat4f(Matrix4f value) {
-        FloatBuffer fb = MemoryStack
-                .stackPush()
-                .mallocFloat(16);
-        value.get(fb);
-        glUniformMatrix4fv(location, false, fb);
+        value.get(buffer);
+        glUniformMatrix4fv(location, false, buffer);
     }
 
     protected void setLocation(int location) {
