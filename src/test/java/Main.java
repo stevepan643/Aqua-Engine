@@ -81,7 +81,8 @@ public class Main {
         };
 
         public static ShaderProgram shaderProgram;
-        public static Mesh mesh;
+        public static Mesh mesh1;
+        public static Mesh mesh2;
 
         public static int width = 800;
         public static int height = 600;
@@ -119,13 +120,16 @@ public class Main {
                 } catch (IOException e) {
                         e.printStackTrace();
                 }
-
-                mesh = Mesh.createMeshWithColorAndText(vertices, indices);
+                
+                mesh1 = Mesh.createMeshWithTextAndText(vertices, indices);
+                mesh2 = Mesh.createMeshWithTextAndText(vertices, indices);
 
                 // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glEnable(GL_DEPTH_TEST);
+                glfwSwapInterval(0);
 
                 shaderProgram.use();
+
                 Uniform<Integer> textureUniform1 = new Uniform<Integer>(
                                 "texture1", 0);
                 shaderProgram.addUniform(textureUniform1);
@@ -141,44 +145,56 @@ public class Main {
                                 "view", new Matrix4f());
                 shaderProgram.addUniform(viewUniform);
 
-                mesh.getTransform()
-                                .translate(0.0f, 0.0f, -2.0f)
+                mesh1.getTransform()
+                                .translate(1.0f, 0.0f, -3.0f)
                                 .rotateX((float) Math.toRadians(-55.0f));
-                Uniform<Matrix4f> modelUniform = new Uniform<Matrix4f>(
-                                "model", mesh.getTransform());
-                shaderProgram.addUniform(modelUniform);
+                mesh2.getTransform()
+                .scale(0.5f, 1f, 0.5f)
+                .translate(-1.0f, 0.0f, -3.0f)
+                .rotateX((float) Math.toRadians(-55.0f));
+                shaderProgram.addUniform(mesh1.getUniform());
+
+                double lastTime = glfwGetTime();
+                int frameCount = 0;
+                float fps = 0;
 
                 while (!window.isShouldClose()) {
+                        glfwPollEvents();
                         processInput(window.get());
+
+                        double currentTime = glfwGetTime();
+                        frameCount++;
+
+                        if (currentTime - lastTime >= 1.0) {
+                                fps = (float) (frameCount / (currentTime - lastTime));
+                                frameCount = 0;
+                                lastTime = currentTime;
+                        }
+
+                        glfwSetWindowTitle(window.get(), "Test Game - FPS: " + 
+                                String.format("%.2f", fps));
 
                         glClearColor(0f, 0f, 0f, 1.0f);
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                        // double time = glfwGetTime();
-                        // double greenValue = Math.sin(time) / 2.0 + 0.5;
-                        // int uniform = glGetUniformLocation(shaderProgram.get(), "ourColor");
-                        // glUniform4f(uniform, 0, (float) greenValue, 0, 0);
-
                         texture1.use();
 
                         if (isChanged) {
-                                projUniform.getValue()
-                                                .identity()
-                                                .perspective(
-                                                                (float) Math.toRadians(60.0f),
-                                                                (float) width / height, 0.01f, 100f);
+                                projUniform.getValue().setPerspective(
+                                        (float) Math.toRadians(60.0f),
+                                        (float) width / height, 0.01f, 100f);
                                 projUniform.update();
                                 isChanged = false;
                         }
 
-                        mesh.getTransform()
-                                        .rotateY((float) Math.toRadians(0.1f));
-                        modelUniform.update();
-
-                        mesh.render();
+                        mesh1.getTransform()
+                                .rotateY((float) Math.toRadians(0.1f));
+                        mesh2.getTransform()
+                                .rotateY((float) Math.toRadians(-0.1f));
+                        mesh1.render();
+                        mesh2.render();
 
                         window.swapBuffers();
-                        glfwPollEvents();
                 }
 
                 cleanup();
@@ -204,7 +220,7 @@ public class Main {
         }
 
         public static void cleanup() {
-                mesh.cleanup();
+                mesh1.cleanup();
                 shaderProgram.cleanup();
                 glfwTerminate();
         }

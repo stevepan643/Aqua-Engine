@@ -41,7 +41,6 @@ public class Uniform<T> {
         this.name = name;
         this.stack = MemoryStack.stackPush();
         this.type = check();
-        System.out.println(type);
     }
 
     private Type check() {
