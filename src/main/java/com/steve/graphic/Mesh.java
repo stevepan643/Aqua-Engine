@@ -35,7 +35,7 @@ public class Mesh {
 
     public static float defaultColor[] = { 0.5f, 0.5f, 0.5f };
 
-    private Matrix4f model;
+    private Uniform<Matrix4f> modelUniform;
 
     private final int VERTEX_SIZE = 8;
 
@@ -49,12 +49,12 @@ public class Mesh {
     private Mesh(float vertices[], int indices[]) {
         this.vertices = vertices;
         this.indices = indices;
-        this.model = new Matrix4f(
+        this.modelUniform = new Uniform<Matrix4f>("model",
+            new Matrix4f(
                 1.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 1.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f);
-
+                0.0f, 0.0f, 0.0f, 1.0f));
         loadMesh();
     }
 
@@ -85,23 +85,21 @@ public class Mesh {
      *         and default color values added to each vertex.
      * @since 1.1
      */
-    public static Mesh createMeshNonColor(float vertices[], int indices[]) {
-        float newVertices[] = new float[vertices.length * 2];
+    public static Mesh createMeshNonText(float vertices[], int indices[]) {
+        float newVertices[] = new float[vertices.length + vertices.length / 3];
         int vertexCount = vertices.length / 3;
 
         for (int i = 0, j = 0; i < vertexCount; i++) {
             newVertices[j++] = vertices[i * 3];
             newVertices[j++] = vertices[i * 3 + 1];
-            newVertices[j++] = vertices[i * 3 + 2];
             newVertices[j++] = defaultColor[0];
             newVertices[j++] = defaultColor[1];
-            newVertices[j++] = defaultColor[2];
         }
 
         return createMeshWithColor(newVertices, indices);
     }
 
-    public static Mesh createMeshWithColorAndText(
+    public static Mesh createMeshWithTextAndText(
             float vertices[], int indices[]) {
         return new Mesh(vertices, indices);
     }
@@ -146,6 +144,7 @@ public class Mesh {
      * @since 1.0
      */
     public void render() {
+        modelUniform.update();
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, indices.length,
                 GL_UNSIGNED_INT, 0);
@@ -163,7 +162,11 @@ public class Mesh {
     }
 
     public Matrix4f getTransform() {
-        return model;
+        return modelUniform.getValue();
+    }
+
+    public Uniform<Matrix4f> getUniform() {
+        return modelUniform;
     }
 
     /**
