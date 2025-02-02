@@ -15,7 +15,8 @@ This project is a engine, and the way of learning OpenGL (www.learnopengl.com) w
 8. [x] Going 3D.
 9. [x] Separate uniform in main, and into a class.
 10. [x] Set up a camera.
-11. [ ] Separate keyboard input management and mouse callback.
-12. [ ] God said, Let there be light.
+11. [ ] Fix camera.
+12. [ ] Separate keyboard input management and mouse callback.
+13. [ ] God said, Let there be light.
 
 __...__

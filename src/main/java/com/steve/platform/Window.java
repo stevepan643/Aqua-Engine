@@ -12,9 +12,15 @@ import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.system.MemoryUtil.NULL;
+
+import org.lwjgl.glfw.GLFWVidMode;
 
 /**
  * The {@code Window} class is responsible for creating and managing a
@@ -27,6 +33,11 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  */
 public class Window {
     private final long window;
+    private final GLFWVidMode mode;
+    private final int monitorWidth;
+    private final int monitorHeight;
+
+    private boolean isFullScreen = false;
 
     /**
      * Creates a new window with the specified width, height, and title.
@@ -40,6 +51,14 @@ public class Window {
         init();
 
         window = glfwCreateWindow(width, height, title, NULL, NULL);
+        mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        monitorWidth = mode.width();
+        monitorHeight = mode.height();
+
+        // Center the window on the screen
+        glfwSetWindowPos(window,
+            (glfwGetVideoMode(glfwGetPrimaryMonitor()).width() - width) / 2,
+            (glfwGetVideoMode(glfwGetPrimaryMonitor()).height() - height) / 2);
 
         // Check.
         if (window == NULL) {
@@ -51,6 +70,7 @@ public class Window {
         glfwMakeContextCurrent(window);
         createCapabilities();
     }
+    
 
     /**
      * Initializes the GLFW library and sets the window hints for creating
@@ -80,6 +100,20 @@ public class Window {
      */
     public long get() {
         return window;
+    }
+
+    public void switchFullScreen() {
+        if (isFullScreen) {
+            glfwSetWindowPos(window,
+                (monitorWidth - 800) / 2,
+                (monitorHeight - 600) / 2);
+            glfwSetWindowSize(window, 800, 600);
+            isFullScreen = false;
+        } else {
+            glfwSetWindowPos(window, 0, 0);
+            glfwSetWindowSize(window, monitorWidth, monitorHeight);
+            isFullScreen = true;
+        }
     }
 
     /**

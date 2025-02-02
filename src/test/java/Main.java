@@ -4,8 +4,6 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 
-import java.io.IOException;
-
 import org.joml.Matrix4f;
 
 import com.steve.graphic.Camera;
@@ -18,69 +16,6 @@ import com.steve.graphic.Uniform;
 import com.steve.platform.Window;
 
 public class Main {
-        public static float vertices[] = {
-                        // positions // colors // texture coords
-                        // 0
-                        0.5f, 0.5f, 0.5f,
-                        1.0f, 0.0f, 0.0f,
-                        1.0f, 1.0f, // top front right
-                        // 1
-                        0.5f, -0.5f, 0.5f,
-                        0.0f, 1.0f, 0.0f,
-                        1.0f, 0.0f, // bottom front right
-                        // 2
-                        -0.5f, -0.5f, 0.5f,
-                        0.0f, 0.0f, 1.0f,
-                        0.0f, 0.0f, // bottom front left
-                        // 3
-                        -0.5f, 0.5f, 0.5f,
-                        1.0f, 1.0f, 0.0f,
-                        0.0f, 1.0f, // top front left
-                        // 4
-                        0.5f, 0.5f, -0.5f,
-                        1.0f, 0.0f, 0.0f,
-                        1.0f, 1.0f, // top back right
-                        // 5
-                        0.5f, -0.5f, -0.5f,
-                        0.0f, 1.0f, 0.0f,
-                        1.0f, 0.0f, // bottom back right
-                        // 6
-                        -0.5f, -0.5f, -0.5f,
-                        0.0f, 0.0f, 1.0f,
-                        0.0f, 0.0f, // bottom back left
-                        // 7
-                        -0.5f, 0.5f, -0.5f,
-                        1.0f, 1.0f, 0.0f,
-                        0.0f, 1.0f // top back left
-
-        };
-
-        public static final int indices[] = {
-                        // top face
-                        0, 1, 3,
-                        1, 2, 3,
-
-                        // bottom face
-                        4, 5, 7,
-                        5, 6, 7,
-
-                        // left face
-                        3, 2, 7,
-                        2, 6, 7,
-
-                        // right face
-                        0, 1, 5,
-                        4, 5, 0,
-
-                        // back face
-                        0, 3, 4,
-                        3, 4, 7,
-
-                        // front face
-                        1, 2, 5,
-                        6, 5, 2,
-
-        };
 
         public static ShaderProgram shaderProgram;
         public static Mesh mesh1;
@@ -92,10 +27,11 @@ public class Main {
         public static boolean isChanged = false;
 
         public static Camera camera = new Camera();
+        public static Window window;
 
         public static void main(String[] args) {
 
-                Window window = new Window(
+                window = new Window(
                                 width, height, "Test Game");
 
                 // If window's size is changing, callback framebuffer_size_callback.
@@ -117,13 +53,7 @@ public class Main {
 
                 shaderProgram.link();
 
-                Texture texture1 = null;
-                try {
-                        texture1 = new Texture("src/main/resources/textures.png");
-
-                } catch (IOException e) {
-                        e.printStackTrace();
-                }
+                Texture texture1 = new Texture("src/main/resources/textures.png");
                 
                 mesh1 = Cube.createCubeAndScale(0.5f);
                 mesh2 = Cube.createCubeAndScale(1.0f);
@@ -148,13 +78,14 @@ public class Main {
                 Uniform<Matrix4f> viewUniform = new Uniform<Matrix4f>(
                                 "view", camera.getViewMatrix());
                 shaderProgram.addUniform(viewUniform);
+                
 
                 mesh1.getTransform()
                                 .translate(1.0f, 0.0f, 0.0f);
                 mesh2.getTransform()
                                 // .scale(0.5f, 0.5f, 0.5f)
                                 .translate(-1.0f, 0.0f, 0.0f);
-                Mesh.setUniform(shaderProgram);
+                Mesh.setupUniform(shaderProgram);
 
                 glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 glfwSetCursorPosCallback(window.get(), (w, xpos, ypos) -> mouse_callback(w, xpos, ypos));
@@ -221,6 +152,7 @@ public class Main {
                 isChanged = true;
         }
 
+        private static boolean lastState = false;
         public static void processInput(long window, float deltaTime) {
                 float cameraSpeed = 2.5f * deltaTime;
                 
@@ -238,6 +170,15 @@ public class Main {
                 }
                 if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
                         camera.moveRight(cameraSpeed);
+                }
+                if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) {
+                        if (!lastState) {
+                                lastState = true;
+                                Main.window.switchFullScreen();
+                        }
+                } else {
+                        lastState = false;
+                        
                 }
                 camera.update();
         }

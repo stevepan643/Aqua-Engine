@@ -75,7 +75,7 @@ public class Texture {
      * @throws IOException if the image file cannot be loaded
      * @since 1.0
      */
-    public Texture(String filepath) throws IOException {
+    public Texture(String filepath) {
         id = count;
         count++;
 
@@ -88,7 +88,11 @@ public class Texture {
         data = stbi_load(
                 filepath, width, height, nrChannels, 0);
         if (data == null) {
-            throw new IOException("Can't open file:" + filepath);
+            try {
+                throw new IOException("Can't open file:" + filepath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         System.out.println(filepath + ": " + width[0] + "x" + height[0] +

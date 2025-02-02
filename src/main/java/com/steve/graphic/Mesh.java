@@ -172,7 +172,7 @@ public class Mesh {
         return modelUniform;
     }
 
-    public static void setUniform(ShaderProgram shaderProgram) {
+    public static void setupUniform(ShaderProgram shaderProgram) {
         shaderProgram.addUniform(new Uniform<Matrix4f>("model", new Matrix4f()));
     }
 
