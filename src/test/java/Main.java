@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.joml.Matrix4f;
 
 import com.steve.graphic.Camera;
+import com.steve.graphic.Cube;
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
@@ -124,12 +125,12 @@ public class Main {
                         e.printStackTrace();
                 }
                 
-                mesh1 = Mesh.createMeshWithTextAndText(vertices, indices);
-                mesh2 = Mesh.createMeshWithTextAndText(vertices, indices);
+                mesh1 = Cube.createCubeAndScale(0.5f);
+                mesh2 = Cube.createCubeAndScale(1.0f);
 
                 // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glEnable(GL_DEPTH_TEST);
-                glfwSwapInterval(0);
+                // glfwSwapInterval(0);
 
                 shaderProgram.use();
 
@@ -149,13 +150,11 @@ public class Main {
                 shaderProgram.addUniform(viewUniform);
 
                 mesh1.getTransform()
-                                .translate(1.0f, 0.0f, 0.0f)
-                                .rotateX((float) Math.toRadians(-55.0f));
+                                .translate(1.0f, 0.0f, 0.0f);
                 mesh2.getTransform()
-                                .scale(0.5f, 0.5f, 0.5f)
-                                .translate(-1.0f, 0.0f, 0.0f)
-                                .rotateX((float) Math.toRadians(-55.0f));
-                shaderProgram.addUniform(mesh1.getUniform());
+                                // .scale(0.5f, 0.5f, 0.5f)
+                                .translate(-1.0f, 0.0f, 0.0f);
+                Mesh.setUniform(shaderProgram);
 
                 double lastTime = glfwGetTime();
                 double lastFrameTime = lastTime;
@@ -175,6 +174,7 @@ public class Main {
                                 fps = (float) (frameCount / (currentTime - lastFrameTime));
                                 frameCount = 0;
                                 lastFrameTime = currentTime;
+                                System.gc();
                         }
                         
                         glfwSetWindowTitle(window.get(), "Test Game - FPS: " + 
@@ -197,9 +197,9 @@ public class Main {
                         }
 
                         mesh1.getTransform()
-                                .rotateY((float) Math.toRadians(0.1f));
+                                .rotateY((float) Math.toRadians(deltaTime *  50f));
                         mesh2.getTransform()
-                                .rotateY((float) Math.toRadians(-0.1f));
+                                .rotateY((float) Math.toRadians(deltaTime * -50f));
                         mesh1.render();
                         mesh2.render();
 
