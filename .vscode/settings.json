@@ -14,7 +14,9 @@
     "Programi",
     "Shaderi",
     "stbi",
-    "Storei"
+    "Storei",
+    "xoffset",
+    "yoffset"
   ],
   "glsllint.additionalStageAssociations": {
     ".vert": "vert", // for a vertex shader

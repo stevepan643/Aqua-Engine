@@ -9,6 +9,7 @@ import java.io.IOException;
 import org.joml.Matrix4f;
 
 import com.steve.graphic.Camera;
+import com.steve.graphic.Cube;
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
@@ -124,12 +125,12 @@ public class Main {
                         e.printStackTrace();
                 }
                 
-                mesh1 = Mesh.createMeshWithTextAndText(vertices, indices);
-                mesh2 = Mesh.createMeshWithTextAndText(vertices, indices);
+                mesh1 = Cube.createCubeAndScale(0.5f);
+                mesh2 = Cube.createCubeAndScale(1.0f);
 
                 // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glEnable(GL_DEPTH_TEST);
-                glfwSwapInterval(0);
+                // glfwSwapInterval(0);
 
                 shaderProgram.use();
 
@@ -149,13 +150,14 @@ public class Main {
                 shaderProgram.addUniform(viewUniform);
 
                 mesh1.getTransform()
-                                .translate(1.0f, 0.0f, 0.0f)
-                                .rotateX((float) Math.toRadians(-55.0f));
+                                .translate(1.0f, 0.0f, 0.0f);
                 mesh2.getTransform()
-                                .scale(0.5f, 0.5f, 0.5f)
-                                .translate(-1.0f, 0.0f, 0.0f)
-                                .rotateX((float) Math.toRadians(-55.0f));
-                shaderProgram.addUniform(mesh1.getUniform());
+                                // .scale(0.5f, 0.5f, 0.5f)
+                                .translate(-1.0f, 0.0f, 0.0f);
+                Mesh.setUniform(shaderProgram);
+
+                glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                glfwSetCursorPosCallback(window.get(), (w, xpos, ypos) -> mouse_callback(w, xpos, ypos));
 
                 double lastTime = glfwGetTime();
                 double lastFrameTime = lastTime;
@@ -175,6 +177,7 @@ public class Main {
                                 fps = (float) (frameCount / (currentTime - lastFrameTime));
                                 frameCount = 0;
                                 lastFrameTime = currentTime;
+                                System.gc();
                         }
                         
                         glfwSetWindowTitle(window.get(), "Test Game - FPS: " + 
@@ -196,10 +199,10 @@ public class Main {
                                 isChanged = false;
                         }
 
-                        mesh1.getTransform()
-                                .rotateY((float) Math.toRadians(0.1f));
-                        mesh2.getTransform()
-                                .rotateY((float) Math.toRadians(-0.1f));
+                        // mesh1.getTransform()
+                        //         .rotateY((float) Math.toRadians(deltaTime *  50f));
+                        // mesh2.getTransform()
+                        //         .rotateY((float) Math.toRadians(deltaTime * -50f));
                         mesh1.render();
                         mesh2.render();
 
@@ -237,6 +240,42 @@ public class Main {
                         camera.moveRight(cameraSpeed);
                 }
                 camera.update();
+        }
+
+        
+
+        private static int lastX = width / 2;
+        private static int lastY = height / 2;
+        private static float yaw = -90.0f;
+        private static float pitch = 0.0f;
+        private static boolean firstMouse = true;
+        public static void mouse_callback(long window, double xpos, double ypos) {
+                if (firstMouse) {
+                        lastX = (int) xpos;
+                        lastY = (int) ypos;
+                        firstMouse = false;
+                }
+
+                float xoffset = (float) (xpos - lastX);
+                float yoffset = (float) (lastY - ypos);
+                lastX = (int) xpos;
+                lastY = (int) ypos;
+
+                float sensitivity = 0.1f;
+                xoffset *= sensitivity;
+                yoffset *= sensitivity;
+
+                yaw += xoffset;
+                pitch += yoffset;
+
+                if (pitch > 89.0f) {
+                    pitch = 89.0f;
+                }
+                if (pitch < -89.0f) {
+                    pitch = -89.0f;
+                }
+
+                camera.lookTo(yaw, pitch);
         }
 
         public static float getFPS() {

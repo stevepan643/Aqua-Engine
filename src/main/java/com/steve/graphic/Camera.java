@@ -1,9 +1,5 @@
 package com.steve.graphic;
 
-import static org.lwjgl.glfw.GLFW.glfwGetTime;
-
-import java.util.Vector;
-
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -49,11 +45,21 @@ public class Camera {
     }
 
     public void moveRight(float speed) {
-        cameraPosition.fma(speed, new Vector3f(cameraFront).cross(cameraUp).normalize());
+        cameraPosition.add(new Vector3f(cameraFront).cross(cameraUp).normalize().mul(speed));
     }
 
     public void moveLeft(float speed) {
-        cameraPosition.fma(-speed, new Vector3f(cameraFront).cross(cameraUp).normalize());
+        cameraPosition.sub(new Vector3f(cameraFront).cross(cameraUp).normalize().mul(speed));
+    }
+
+    public void lookTo(float yaw, float pitch) {
+
+        Vector3f direction = new Vector3f();
+        direction.x = (float) (Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
+        direction.y = (float) Math.sin(Math.toRadians(pitch));
+        direction.z = (float) (Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
+
+        cameraFront = direction.normalize();
     }
 
     public void update() {

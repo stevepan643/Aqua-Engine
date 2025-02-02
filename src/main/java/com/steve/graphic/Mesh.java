@@ -46,7 +46,7 @@ public class Mesh {
      * @param indices  Indic of each mesh's face
      * @since 1.0
      */
-    private Mesh(float vertices[], int indices[]) {
+    protected Mesh(float vertices[], int indices[]) {
         this.vertices = vertices;
         this.indices = indices;
         this.modelUniform = new Uniform<Matrix4f>("model",
@@ -85,7 +85,7 @@ public class Mesh {
      *         and default color values added to each vertex.
      * @since 1.1
      */
-    public static Mesh createMeshNonText(float vertices[], int indices[]) {
+    public static Mesh createMeshNonColor(float vertices[], int indices[]) {
         float newVertices[] = new float[vertices.length + vertices.length / 3];
         int vertexCount = vertices.length / 3;
 
@@ -122,14 +122,17 @@ public class Mesh {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
 
+        // position attribute
         glVertexAttribPointer(0, 3, GL_FLOAT,
                 false, VERTEX_SIZE * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
 
+        // color attribute
         glVertexAttribPointer(1, 3, GL_FLOAT,
                 false, VERTEX_SIZE * Float.BYTES, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
 
+        // texture attribute
         glVertexAttribPointer(2, 2, GL_FLOAT,
                 false, VERTEX_SIZE * Float.BYTES, 6 * Float.BYTES);
         glEnableVertexAttribArray(2);
@@ -167,6 +170,10 @@ public class Mesh {
 
     public Uniform<Matrix4f> getUniform() {
         return modelUniform;
+    }
+
+    public static void setUniform(ShaderProgram shaderProgram) {
+        shaderProgram.addUniform(new Uniform<Matrix4f>("model", new Matrix4f()));
     }
 
     /**
