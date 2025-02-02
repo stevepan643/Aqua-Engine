@@ -156,6 +156,9 @@ public class Main {
                                 .translate(-1.0f, 0.0f, 0.0f);
                 Mesh.setUniform(shaderProgram);
 
+                glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                glfwSetCursorPosCallback(window.get(), (w, xpos, ypos) -> mouse_callback(w, xpos, ypos));
+
                 double lastTime = glfwGetTime();
                 double lastFrameTime = lastTime;
                 int frameCount = 0;
@@ -196,10 +199,10 @@ public class Main {
                                 isChanged = false;
                         }
 
-                        mesh1.getTransform()
-                                .rotateY((float) Math.toRadians(deltaTime *  50f));
-                        mesh2.getTransform()
-                                .rotateY((float) Math.toRadians(deltaTime * -50f));
+                        // mesh1.getTransform()
+                        //         .rotateY((float) Math.toRadians(deltaTime *  50f));
+                        // mesh2.getTransform()
+                        //         .rotateY((float) Math.toRadians(deltaTime * -50f));
                         mesh1.render();
                         mesh2.render();
 
@@ -237,6 +240,42 @@ public class Main {
                         camera.moveRight(cameraSpeed);
                 }
                 camera.update();
+        }
+
+        
+
+        private static int lastX = width / 2;
+        private static int lastY = height / 2;
+        private static float yaw = -90.0f;
+        private static float pitch = 0.0f;
+        private static boolean firstMouse = true;
+        public static void mouse_callback(long window, double xpos, double ypos) {
+                if (firstMouse) {
+                        lastX = (int) xpos;
+                        lastY = (int) ypos;
+                        firstMouse = false;
+                }
+
+                float xoffset = (float) (xpos - lastX);
+                float yoffset = (float) (lastY - ypos);
+                lastX = (int) xpos;
+                lastY = (int) ypos;
+
+                float sensitivity = 0.1f;
+                xoffset *= sensitivity;
+                yoffset *= sensitivity;
+
+                yaw += xoffset;
+                pitch += yoffset;
+
+                if (pitch > 89.0f) {
+                    pitch = 89.0f;
+                }
+                if (pitch < -89.0f) {
+                    pitch = -89.0f;
+                }
+
+                camera.lookTo(yaw, pitch);
         }
 
         public static float getFPS() {

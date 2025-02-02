@@ -1,5 +1,3 @@
-import com.steve.graphic.Mesh;
-
 public class TestAddColor {
     public static void main(String[] args) {
         // Mesh.createMeshNonColor(new float[] {
