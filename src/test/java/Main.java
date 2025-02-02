@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.joml.Matrix4f;
 
+import com.steve.graphic.Camera;
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
@@ -89,6 +90,8 @@ public class Main {
 
         public static boolean isChanged = false;
 
+        public static Camera camera = new Camera();
+
         public static void main(String[] args) {
 
                 Window window = new Window(
@@ -142,37 +145,43 @@ public class Main {
                 shaderProgram.addUniform(projUniform);
 
                 Uniform<Matrix4f> viewUniform = new Uniform<Matrix4f>(
-                                "view", new Matrix4f());
+                                "view", camera.getViewMatrix());
                 shaderProgram.addUniform(viewUniform);
 
                 mesh1.getTransform()
-                                .translate(1.0f, 0.0f, -3.0f)
+                                .translate(1.0f, 0.0f, 0.0f)
                                 .rotateX((float) Math.toRadians(-55.0f));
                 mesh2.getTransform()
-                .scale(0.5f, 1f, 0.5f)
-                .translate(-1.0f, 0.0f, -3.0f)
-                .rotateX((float) Math.toRadians(-55.0f));
+                                .scale(0.5f, 0.5f, 0.5f)
+                                .translate(-1.0f, 0.0f, 0.0f)
+                                .rotateX((float) Math.toRadians(-55.0f));
                 shaderProgram.addUniform(mesh1.getUniform());
 
                 double lastTime = glfwGetTime();
+                double lastFrameTime = lastTime;
                 int frameCount = 0;
                 float fps = 0;
 
                 while (!window.isShouldClose()) {
                         glfwPollEvents();
-                        processInput(window.get());
 
                         double currentTime = glfwGetTime();
                         frameCount++;
 
-                        if (currentTime - lastTime >= 1.0) {
-                                fps = (float) (frameCount / (currentTime - lastTime));
-                                frameCount = 0;
-                                lastTime = currentTime;
-                        }
+                        double deltaTime = currentTime - lastTime;
+                        lastTime = currentTime;
 
+                        if (currentTime - lastFrameTime >= 1.0) {
+                                fps = (float) (frameCount / (currentTime - lastFrameTime));
+                                frameCount = 0;
+                                lastFrameTime = currentTime;
+                        }
+                        
                         glfwSetWindowTitle(window.get(), "Test Game - FPS: " + 
                                 String.format("%.2f", fps));
+
+                        processInput(window.get(), (float) deltaTime);
+                        viewUniform.update();
 
                         glClearColor(0f, 0f, 0f, 1.0f);
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -209,10 +218,25 @@ public class Main {
                 isChanged = true;
         }
 
-        public static void processInput(long window) {
+        public static void processInput(long window, float deltaTime) {
+                float cameraSpeed = 2.5f * deltaTime;
+                
                 if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                         glfwSetWindowShouldClose(window, true);
                 }
+                if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+                        camera.moveForward(cameraSpeed);
+                }
+                if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+                        camera.moveBackward(cameraSpeed);
+                }
+                if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+                        camera.moveLeft(cameraSpeed);
+                }
+                if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+                        camera.moveRight(cameraSpeed);
+                }
+                camera.update();
         }
 
         public static float getFPS() {
