@@ -13,6 +13,10 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+
+import com.steve.utils.LogUtil;
+
 /**
  * Shader program.
  * 
@@ -23,6 +27,8 @@ public class ShaderProgram {
     private final int shaderProgram;
 
     private HashMap<String, Shader> shaders = new HashMap<>();
+    
+    private final Logger LOGGER = LogUtil.getLogger();
 
     /**
      * Create a program.
@@ -65,7 +71,7 @@ public class ShaderProgram {
         glLinkProgram(shaderProgram);
 
         if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == NULL) {
-            System.err.println("Felid to Link Program");
+            LOGGER.error("Failed to Link Shader Program");
         }
     }
 

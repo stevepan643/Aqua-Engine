@@ -21,6 +21,9 @@ import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import org.lwjgl.glfw.GLFWVidMode;
+import org.slf4j.Logger;
+
+import com.steve.utils.LogUtil;
 
 /**
  * The {@code Window} class is responsible for creating and managing a
@@ -38,7 +41,8 @@ public class Window {
     private final int monitorHeight;
 
     private boolean isFullScreen = false;
-
+    
+    private final Logger LOGGER = LogUtil.getLogger();
     /**
      * Creates a new window with the specified width, height, and title.
      *
@@ -51,6 +55,8 @@ public class Window {
         init();
 
         window = glfwCreateWindow(width, height, title, NULL, NULL);
+        LOGGER.debug("Created Window");
+
         mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
         monitorWidth = mode.width();
         monitorHeight = mode.height();
@@ -62,7 +68,7 @@ public class Window {
 
         // Check.
         if (window == NULL) {
-            System.err.println("Failed to Create Window");
+            LOGGER.error("Failed to Create Window");
             glfwTerminate();
             System.exit(-1);
         }
@@ -82,12 +88,14 @@ public class Window {
      */
     private void init() {
         // Initialization glfw.
+        LOGGER.debug("Initializing GLFW");
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         // If run on macOS, need this.
         if (isMacOs()) {
+            LOGGER.debug("Running on macOS");
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         }
     }

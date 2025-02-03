@@ -24,6 +24,10 @@ import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import org.slf4j.Logger;
+
+import com.steve.utils.LogUtil;
+
 /**
  * The {@code Texture} class is responsible for loading and managing
  * textures in an OpenGL context.
@@ -63,6 +67,8 @@ public class Texture {
     private static int count = 0;
     public int id;
 
+    private final Logger LOGGER = LogUtil.getLogger();
+
     static {
         stbi_set_flip_vertically_on_load(true);
     }
@@ -95,8 +101,9 @@ public class Texture {
             }
         }
 
-        System.out.println(filepath + ": " + width[0] + "x" + height[0] +
-                ", " + nrChannels[0] + ", " + id);
+
+        LOGGER.debug("Load Texture from: " + filepath + "<" + width[0] + "x" + height[0] +
+                ", " + nrChannels[0] + ", " + id + ">");
         glPixelStorei(GL_TEXTURE_2D, 1);
         glTexImage2D(
                 GL_TEXTURE_2D, 0, GL_RGBA,
