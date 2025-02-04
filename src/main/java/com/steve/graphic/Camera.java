@@ -2,6 +2,9 @@ package com.steve.graphic;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.slf4j.Logger;
+
+import com.steve.utils.LogUtil;
 
 public class Camera {
 
@@ -18,12 +21,15 @@ public class Camera {
 
     private Matrix4f viewMatrix;
 
+    private final Logger LOGGER = LogUtil.getLogger();
+
     public Camera() {
         cameraPosition = new Vector3f(0, 0, 3f);
         cameraTarget = new Vector3f(0, 0, 0);
         cameraDirection = new Vector3f(cameraPosition).sub(cameraTarget).normalize();
         cameraFront = new Vector3f(0, 0, -1);
         cameraPPF = new Vector3f(cameraPosition).add(cameraFront);
+        cameraPositionY = cameraPosition.y;
 
         up = new Vector3f(0, 1, 0);
         
@@ -37,19 +43,47 @@ public class Camera {
     }
 
     public void moveForward(float speed) {
-        cameraPosition.add(new Vector3f(cameraFront).mul(speed));
+        cameraPosition.add(new Vector3f(cameraFront.x, 0, cameraFront.z).normalize().mul(speed));
+        cameraPosition.y = cameraPositionY;
+
+        cameraTarget = new Vector3f(cameraPosition).add(cameraFront);
     }
 
     public void moveBackward(float speed) {
-        cameraPosition.sub(new Vector3f(cameraFront).mul(speed));
+        cameraPosition.sub(new Vector3f(cameraFront.x, 0, cameraFront.z).normalize().mul(speed));
+        cameraPosition.y = cameraPositionY;
+        
+        cameraTarget = new Vector3f(cameraPosition).add(cameraFront);
     }
 
     public void moveRight(float speed) {
         cameraPosition.add(new Vector3f(cameraFront).cross(cameraUp).normalize().mul(speed));
+        cameraPosition.y = cameraPositionY;
+        
+        cameraTarget = new Vector3f(cameraPosition).add(cameraFront);
     }
 
     public void moveLeft(float speed) {
         cameraPosition.sub(new Vector3f(cameraFront).cross(cameraUp).normalize().mul(speed));
+        cameraPosition.y = cameraPositionY;
+        
+        cameraTarget = new Vector3f(cameraPosition).add(cameraFront);
+    }
+
+    float cameraPositionY = 0.0f;
+
+    public void moveUp(float speed) {
+        cameraPositionY += speed;
+        cameraPosition.y = cameraPositionY;
+        
+        cameraTarget = new Vector3f(cameraPosition).add(cameraFront);
+    }
+
+    public void moveDown(float speed) {
+        cameraPositionY -= speed;
+        cameraPosition.y = cameraPositionY;
+        
+        cameraTarget = new Vector3f(cameraPosition).add(cameraFront);
     }
 
     public void lookTo(float yaw, float pitch) {
@@ -60,6 +94,8 @@ public class Camera {
         direction.z = (float) (Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)));
 
         cameraFront = direction.normalize();
+        cameraTarget = new Vector3f(cameraPosition).add(cameraFront);
+        // LOGGER.debug("Camera Front: " + cameraFront);
     }
 
     public void update() {

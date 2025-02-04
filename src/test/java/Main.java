@@ -5,21 +5,25 @@ import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 
 import org.joml.Matrix4f;
+import org.slf4j.Logger;
 
 import com.steve.graphic.Camera;
 import com.steve.graphic.Cube;
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
+import com.steve.graphic.Sphere;
 import com.steve.graphic.Texture;
 import com.steve.graphic.Uniform;
 import com.steve.platform.Window;
+import com.steve.utils.LogUtil;
 
 public class Main {
 
         public static ShaderProgram shaderProgram;
         public static Mesh mesh1;
         public static Mesh mesh2;
+        public static Mesh sphere;
 
         public static int width = 800;
         public static int height = 600;
@@ -28,6 +32,12 @@ public class Main {
 
         public static Camera camera = new Camera();
         public static Window window;
+
+        public static Uniform<Matrix4f> projUniform;
+        
+        public static float fov = 100.0f;
+
+        private final static Logger LOGGER = LogUtil.getLogger();
 
         public static void main(String[] args) {
 
@@ -57,10 +67,11 @@ public class Main {
                 
                 mesh1 = Cube.createCubeAndScale(0.5f);
                 mesh2 = Cube.createCubeAndScale(1.0f);
+                sphere = Sphere.createSphereAndScale(0.5f);
 
                 // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glEnable(GL_DEPTH_TEST);
-                // glfwSwapInterval(0);
+                glfwSwapInterval(0);
 
                 shaderProgram.use();
 
@@ -68,10 +79,10 @@ public class Main {
                                 "texture1", 0);
                 shaderProgram.addUniform(textureUniform1);
 
-                Uniform<Matrix4f> projUniform = new Uniform<Matrix4f>(
+                projUniform = new Uniform<Matrix4f>(
                                 "proj",
                                 new Matrix4f().perspective(
-                                                (float) Math.toRadians(60.0f),
+                                                (float) Math.toRadians(fov),
                                                 (float) width / height, 0.01f, 100f));
                 shaderProgram.addUniform(projUniform);
 
@@ -89,6 +100,8 @@ public class Main {
 
                 glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 glfwSetCursorPosCallback(window.get(), (w, xpos, ypos) -> mouse_callback(w, xpos, ypos));
+
+                glfwSetScrollCallback(window.get(), (w, xoffset, yoffset) -> scroll_callback(w, xoffset, yoffset));
 
                 double lastTime = glfwGetTime();
                 double lastFrameTime = lastTime;
@@ -136,6 +149,7 @@ public class Main {
                         //         .rotateY((float) Math.toRadians(deltaTime * -50f));
                         mesh1.render();
                         mesh2.render();
+                        sphere.render();
 
                         window.swapBuffers();
                 }
@@ -154,7 +168,7 @@ public class Main {
 
         private static boolean lastState = false;
         public static void processInput(long window, float deltaTime) {
-                float cameraSpeed = 2.5f * deltaTime;
+                float cameraSpeed = 1.0f * deltaTime;
                 
                 if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
                         glfwSetWindowShouldClose(window, true);
@@ -171,6 +185,12 @@ public class Main {
                 if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
                         camera.moveRight(cameraSpeed);
                 }
+                if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+                        camera.moveUp(cameraSpeed);
+                }
+                if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS) {
+                        camera.moveDown(cameraSpeed);
+                }
                 if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) {
                         if (!lastState) {
                                 lastState = true;
@@ -185,22 +205,22 @@ public class Main {
 
         
 
-        private static int lastX = width / 2;
-        private static int lastY = height / 2;
+        private static float lastX = width / 2;
+        private static float lastY = height / 2;
         private static float yaw = -90.0f;
         private static float pitch = 0.0f;
         private static boolean firstMouse = true;
         public static void mouse_callback(long window, double xpos, double ypos) {
                 if (firstMouse) {
-                        lastX = (int) xpos;
-                        lastY = (int) ypos;
+                        lastX = (float) xpos;
+                        lastY = (float) ypos;
                         firstMouse = false;
                 }
 
                 float xoffset = (float) (xpos - lastX);
-                float yoffset = (float) (lastY - ypos);
-                lastX = (int) xpos;
-                lastY = (int) ypos;
+                float yoffset = (float) (lastY - ypos); 
+                lastX = (float) xpos;
+                lastY = (float) ypos;
 
                 float sensitivity = 0.1f;
                 xoffset *= sensitivity;
@@ -216,7 +236,26 @@ public class Main {
                     pitch = -89.0f;
                 }
 
+                yaw = yaw % 360.0f;
+                if (yaw < 0.0f) yaw += 360.0f;
+
+
                 camera.lookTo(yaw, pitch);
+        }
+
+        public static void scroll_callback(long window, double xoffset, double yoffset) {
+                fov -= yoffset;
+                if (fov < 30.0f) {
+                        fov = 30.0f;
+                }
+                if (fov > 100.0f) {
+                        fov = 100.0f;
+                }
+                LOGGER.debug("fov: " + fov);
+                projUniform.getValue().setPerspective(
+                        (float) Math.toRadians(fov),
+                        (float) width / height, 0.01f, 100f);
+                projUniform.update();
         }
 
         public static float getFPS() {
