@@ -115,4 +115,8 @@ public class Camera {
         return viewMatrix;
     }
 
+    public Vector3f getPosition() {
+        return cameraPosition;
+    }
+
 }

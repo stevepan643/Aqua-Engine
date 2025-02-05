@@ -5,10 +5,12 @@ import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 
 import com.steve.graphic.Camera;
 import com.steve.graphic.Cube;
+import com.steve.graphic.Material;
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
@@ -21,9 +23,11 @@ import com.steve.utils.LogUtil;
 public class Main {
 
         public static ShaderProgram shaderProgram;
+        public static ShaderProgram shaderProgram2;
         public static Mesh mesh1;
         public static Mesh mesh2;
-        public static Mesh sphere;
+        public static Mesh mesh3;
+        public static Mesh mesh4;
 
         public static int width = 800;
         public static int height = 600;
@@ -57,17 +61,27 @@ public class Main {
                                 "src/main/resources/shaders/f.fs",
                                 GL_FRAGMENT_SHADER);
 
+                Shader fragment2 = new Shader(
+                                "src/main/resources/shaders/f2.fs",
+                                GL_FRAGMENT_SHADER);
+
                 shaderProgram = new ShaderProgram();
                 shaderProgram.addShader("vertexShader", vertex);
                 shaderProgram.addShader("fragmentShader", fragment);
 
+                shaderProgram2 = new ShaderProgram();
+                shaderProgram2.addShader("vertexShader", vertex);
+                shaderProgram2.addShader("fragmentShader", fragment2);
+
                 shaderProgram.link();
+                shaderProgram2.link();
 
                 Texture texture1 = new Texture("src/main/resources/textures.png");
                 
                 mesh1 = Cube.createCubeAndScale(0.5f);
                 mesh2 = Cube.createCubeAndScale(1.0f);
-                sphere = Sphere.createSphereAndScale(0.5f);
+                mesh3 = Cube.createCubeAndScale(0.5f);
+                mesh4 = Cube.createCubeAndScale(0.5f);
 
                 // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glEnable(GL_DEPTH_TEST);
@@ -77,26 +91,27 @@ public class Main {
 
                 Uniform<Integer> textureUniform1 = new Uniform<Integer>(
                                 "texture1", 0);
-                shaderProgram.addUniform(textureUniform1);
 
                 projUniform = new Uniform<Matrix4f>(
                                 "proj",
                                 new Matrix4f().perspective(
                                                 (float) Math.toRadians(fov),
                                                 (float) width / height, 0.01f, 100f));
-                shaderProgram.addUniform(projUniform);
 
                 Uniform<Matrix4f> viewUniform = new Uniform<Matrix4f>(
-                                "view", camera.getViewMatrix());
-                shaderProgram.addUniform(viewUniform);
-                
+                                "view", camera.getViewMatrix());  
+                                
+                Uniform<Vector3f> viewPosUniform = new Uniform<Vector3f>(
+                                "viewPos", camera.getPosition());
 
                 mesh1.getTransform()
-                                .translate(1.0f, 0.0f, 0.0f);
+                                .translate(1.0f, 1.0f, -0.5f);
                 mesh2.getTransform()
-                                // .scale(0.5f, 0.5f, 0.5f)
                                 .translate(-1.0f, 0.0f, 0.0f);
-                Mesh.setupUniform(shaderProgram);
+                mesh3.getTransform()
+                                .translate(-1.0f, 0.0f, -2.0f);
+                mesh4.getTransform()
+                                .translate(2.0f, 1.5f, 0.0f);
 
                 glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 glfwSetCursorPosCallback(window.get(), (w, xpos, ypos) -> mouse_callback(w, xpos, ypos));
@@ -107,6 +122,12 @@ public class Main {
                 double lastFrameTime = lastTime;
                 int frameCount = 0;
                 float fps = 0;
+
+                Material material = new Material(
+                        "src/main/resources/container2.png",
+                        "src/main/resources/container2_specular.png",
+                        "Test Material"
+                );
 
                 while (!window.isShouldClose()) {
                         glfwPollEvents();
@@ -147,9 +168,23 @@ public class Main {
                         //         .rotateY((float) Math.toRadians(deltaTime *  50f));
                         // mesh2.getTransform()
                         //         .rotateY((float) Math.toRadians(deltaTime * -50f));
+
+                        shaderProgram.use();
+                        shaderProgram.addUniform(viewUniform); 
+                        shaderProgram.addUniform(projUniform);
+                        Mesh.setupUniform(shaderProgram);
                         mesh1.render();
+                        // shaderProgram.unused();
+                        shaderProgram2.use();
+                        shaderProgram2.addUniform(textureUniform1);
+                        shaderProgram2.addUniform(projUniform);
+                        shaderProgram2.addUniform(viewUniform);
+                        shaderProgram2.addUniform(viewPosUniform);
+                        Mesh.setupUniform(shaderProgram2);
                         mesh2.render();
-                        sphere.render();
+                        mesh3.render();
+                        mesh4.render();
+                        // sphere.render();
 
                         window.swapBuffers();
                 }
@@ -210,6 +245,7 @@ public class Main {
         private static float yaw = -90.0f;
         private static float pitch = 0.0f;
         private static boolean firstMouse = true;
+        private static float sensitivity = 0.1f;
         public static void mouse_callback(long window, double xpos, double ypos) {
                 if (firstMouse) {
                         lastX = (float) xpos;
@@ -222,7 +258,6 @@ public class Main {
                 lastX = (float) xpos;
                 lastY = (float) ypos;
 
-                float sensitivity = 0.1f;
                 xoffset *= sensitivity;
                 yoffset *= sensitivity;
 
@@ -244,18 +279,28 @@ public class Main {
         }
 
         public static void scroll_callback(long window, double xoffset, double yoffset) {
-                fov -= yoffset;
-                if (fov < 30.0f) {
-                        fov = 30.0f;
+                if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) {
+                        sensitivity += yoffset / 100.0f;
+                        if (sensitivity < 0.01f) {
+                                sensitivity = 0.01f;
+                        } else if (sensitivity > 1.0f) {
+                                sensitivity = 1.0f;
+                        }
+                        LOGGER.debug("sensitivity: " + sensitivity);
+                } else {
+                        fov -= yoffset;
+                        if (fov < 30.0f) {
+                                fov = 30.0f;
+                        }
+                        if (fov > 100.0f) {
+                                fov = 100.0f;
+                        }
+                        LOGGER.debug("fov: " + fov);
+                        projUniform.getValue().setPerspective(
+                                (float) Math.toRadians(fov),
+                                (float) width / height, 0.01f, 100f);
+                        projUniform.update();
                 }
-                if (fov > 100.0f) {
-                        fov = 100.0f;
-                }
-                LOGGER.debug("fov: " + fov);
-                projUniform.getValue().setPerspective(
-                        (float) Math.toRadians(fov),
-                        (float) width / height, 0.01f, 100f);
-                projUniform.update();
         }
 
         public static float getFPS() {
@@ -265,6 +310,7 @@ public class Main {
         public static void cleanup() {
                 mesh1.cleanup();
                 shaderProgram.cleanup();
+                shaderProgram2.cleanup();
                 glfwTerminate();
         }
 

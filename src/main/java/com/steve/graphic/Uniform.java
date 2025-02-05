@@ -12,6 +12,7 @@ import java.nio.FloatBuffer;
 
 import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 
 public class Uniform<T> {
@@ -22,6 +23,7 @@ public class Uniform<T> {
         f1,
         fn,
         mat4f,
+        vec3f,
         none,
     };
 
@@ -57,6 +59,9 @@ public class Uniform<T> {
             return Type.fn;
         } else if (value instanceof Boolean) {
             return Type.b;
+        } else if (value instanceof Vector3f) {
+            return Type.vec3f;
+            
         } else {
             return Type.none;
         }
@@ -78,6 +83,9 @@ public class Uniform<T> {
                 break;
             case b:
                 setBool((boolean) value);
+                break;
+            case vec3f:
+                setVector3f((Vector3f) value);
                 break;
             default:
                 break;
@@ -137,15 +145,15 @@ public class Uniform<T> {
                 setFloat(values[0]);
                 break;
             case 2:
-                glUniform2f(glGetUniformLocation(location, name),
+                glUniform2f(location,
                         values[0], values[1]);
                 break;
             case 3:
-                glUniform3f(glGetUniformLocation(location, name),
+                glUniform3f(location,
                         values[0], values[1], values[2]);
                 break;
             case 4:
-                glUniform4f(glGetUniformLocation(location, name),
+                glUniform4f(location,
                         values[0], values[1], values[2], values[3]);
                 break;
             default:
@@ -163,6 +171,10 @@ public class Uniform<T> {
     private void setMat4f(Matrix4f value) {
         value.get(buffer);
         glUniformMatrix4fv(location, false, buffer);
+    }
+
+    private void setVector3f(Vector3f value) {
+        glUniform3f(location, value.x, value.y, value.z);
     }
 
     protected void setLocation(int location) {

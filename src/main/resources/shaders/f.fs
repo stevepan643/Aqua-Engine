@@ -1,12 +1,15 @@
 #version 330 core
 out vec4 FragColor;
 
-in vec3 color;
+in vec3 normal;
 in vec2 texCoord;
-
-uniform sampler2D texture1;
+in vec3 fragPos;
 
 void main()
 {
-    FragColor = texture(texture1, texCoord);
+    float ambientStrength = 1.0;
+    vec3 ambient = ambientStrength * vec3(1.0);
+
+    vec3 result = ambient * vec3(1.0);
+    FragColor = vec4(result, 1.0);
 }

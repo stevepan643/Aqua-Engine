@@ -51,18 +51,6 @@ public class ShaderProgram {
     }
 
     /**
-     * Detach a shader.
-     * 
-     * @param name Which shader need to detach.
-     * @since 1.0
-     */
-    public void delShader(String name) {
-        glDetachShader(shaderProgram, shaders.get(name).get());
-
-        shaders.remove(name);
-    }
-
-    /**
      * Link all of shaders.
      * 
      * @since 1.0
@@ -84,6 +72,10 @@ public class ShaderProgram {
         glUseProgram(shaderProgram);
     }
 
+    public void unused() {
+        glUseProgram(0);
+    }
+
     /**
      * Retrieves the shader program identifier.
      *
@@ -98,6 +90,12 @@ public class ShaderProgram {
         uniform.setLocation(
                 glGetUniformLocation(shaderProgram, uniform.getName()));
         uniform.update();
+    }
+
+    public void addUniforms(Uniform<?>... uniforms) {
+        for (Uniform<?> uniform : uniforms) {
+            addUniform(uniform);
+        }
     }
 
     /**

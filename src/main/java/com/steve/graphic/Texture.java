@@ -113,6 +113,10 @@ public class Texture {
         stbi_image_free(data);
     }
 
+    protected int getTextureID() {
+        return id;
+    }
+
     /**
      * Binds the texture for use in OpenGL rendering.
      * This method activates the texture unit specified by the texture ID
