@@ -113,7 +113,7 @@ public class Texture {
         stbi_image_free(data);
     }
 
-    protected int getTextureID() {
+    public int getTextureID() {
         return id;
     }
 

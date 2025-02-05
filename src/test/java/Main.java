@@ -76,7 +76,8 @@ public class Main {
                 shaderProgram.link();
                 shaderProgram2.link();
 
-                Texture texture1 = new Texture("src/main/resources/textures.png");
+                Texture texture1 = new Texture("src/main/resources/container2.png");
+                Texture specular = new Texture("src/main/resources/container2_specular.png");
                 
                 mesh1 = Cube.createCubeAndScale(0.5f);
                 mesh2 = Cube.createCubeAndScale(1.0f);
@@ -90,7 +91,9 @@ public class Main {
                 shaderProgram.use();
 
                 Uniform<Integer> textureUniform1 = new Uniform<Integer>(
-                                "texture1", 0);
+                                "texture1", texture1.getTextureID());
+                Uniform<Integer> textureUniform2 = new Uniform<Integer>(
+                                "specularText1", specular.getTextureID());
 
                 projUniform = new Uniform<Matrix4f>(
                                 "proj",
@@ -155,6 +158,7 @@ public class Main {
                         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                         texture1.use();
+                        specular.use();
 
                         if (isChanged) {
                                 projUniform.getValue().setPerspective(
@@ -177,6 +181,7 @@ public class Main {
                         // shaderProgram.unused();
                         shaderProgram2.use();
                         shaderProgram2.addUniform(textureUniform1);
+                        shaderProgram2.addUniform(textureUniform2);
                         shaderProgram2.addUniform(projUniform);
                         shaderProgram2.addUniform(viewUniform);
                         shaderProgram2.addUniform(viewPosUniform);
