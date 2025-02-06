@@ -1,23 +1,25 @@
 package com.steve.graphic;
 
 public class GameObject {
-    Texture texture;
-    Texture diffuse;
-    Texture specular;
-
+    Material material;
     Mesh mesh;
+    ShaderProgram shaderProgram;
 
-    public GameObject(String texture, String diffuse, String specular, Mesh mesh) {
-        this.texture = new Texture(texture);
-        this.diffuse = new Texture(diffuse);
-        this.specular = new Texture(specular);
+    public GameObject(Material material, Mesh mesh) {
+        this.material = material;
         this.mesh = mesh;
     }
 
     public void render() {
-        texture.use();
-        diffuse.use();
-        specular.use();
+        material.use();
         mesh.render();
+    }
+
+    public Mesh getMesh() {
+        return mesh;
+    }
+
+    public Material getMaterial() {
+        return material;
     }
 }

@@ -14,6 +14,9 @@ import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
+import org.slf4j.Logger;
+
+import com.steve.utils.LogUtil;
 
 public class Uniform<T> {
     enum Type {
@@ -38,11 +41,14 @@ public class Uniform<T> {
 
     private final MemoryStack stack;
 
+    // private final Logger LOGGER = LogUtil.getLogger();
+
     public Uniform(String name, T value) {
         this.value = value;
         this.name = name;
         this.stack = MemoryStack.stackPush();
         this.type = check();
+        // LOGGER.debug("name is:" + name);
     }
 
     private Type check() {
@@ -90,6 +96,10 @@ public class Uniform<T> {
             default:
                 break;
         }
+    }
+
+    public void setValue(T v) {
+        this.value = v;
     }
 
     /**
