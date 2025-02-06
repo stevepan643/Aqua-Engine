@@ -7,6 +7,7 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
 import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_RGB;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL14.GL_MIRRORED_REPEAT;
@@ -23,6 +24,11 @@ import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+
+import org.slf4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+
+import com.steve.utils.LogUtil;
 
 /**
  * The {@code Texture} class is responsible for loading and managing
@@ -63,9 +69,16 @@ public class Texture {
     private static int count = 0;
     public int id;
 
+    private final Logger LOGGER = LogUtil.getLogger();
+
     static {
         stbi_set_flip_vertically_on_load(true);
     }
+
+    private enum TextureType {
+        jpg,
+        png
+    };
 
     /**
      * Constructs a new Texture object by loading an image from the
@@ -75,7 +88,7 @@ public class Texture {
      * @throws IOException if the image file cannot be loaded
      * @since 1.0
      */
-    public Texture(String filepath) throws IOException {
+    public Texture(String filepath) {
         id = count;
         count++;
 
@@ -88,18 +101,51 @@ public class Texture {
         data = stbi_load(
                 filepath, width, height, nrChannels, 0);
         if (data == null) {
-            throw new IOException("Can't open file:" + filepath);
+            try {
+                throw new IOException("Can't open file:" + filepath);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        System.out.println(filepath + ": " + width[0] + "x" + height[0] +
-                ", " + nrChannels[0] + ", " + id);
+        TextureType type = typeCheck(filepath);
+
+        LOGGER.debug("Load Texture from: " + filepath + "<" + width[0] + "x" + height[0] +
+                ", " + nrChannels[0] + ", " + id + ">");
         glPixelStorei(GL_TEXTURE_2D, 1);
-        glTexImage2D(
-                GL_TEXTURE_2D, 0, GL_RGBA,
-                width[0], height[0], 0,
-                GL_RGBA, GL_UNSIGNED_BYTE, data);
+        switch (type) {
+            case jpg:
+                glTexImage2D(
+                    GL_TEXTURE_2D, 0, GL_RGBA,
+                    width[0], height[0], 0,
+                    GL_RGB, GL_UNSIGNED_BYTE, data);
+                break;
+            case png:
+                glTexImage2D(
+                    GL_TEXTURE_2D, 0, GL_RGBA,
+                    width[0], height[0], 0,
+                    GL_RGBA, GL_UNSIGNED_BYTE, data);
+                break;
+            default:
+                break;
+        }
         glGenerateMipmap(GL_TEXTURE_2D);
         stbi_image_free(data);
+    }
+
+    public int getTextureID() {
+        return id;
+    }
+
+    private TextureType typeCheck(String filepath) {
+        String s = StringUtils.substringAfterLast(filepath, ".");
+        if (s.equalsIgnoreCase("jpg")) {
+            return TextureType.jpg;
+        } else if (s.equalsIgnoreCase("png")) {
+            return TextureType.png;
+        } else {
+            throw new IllegalArgumentException("Unsupported texture type: " + s);
+        }
     }
 
     /**

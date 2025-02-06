@@ -5,6 +5,7 @@ import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_CORE_PROFILE;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_FORWARD_COMPAT;
 import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
+import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
 import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
 import static org.lwjgl.glfw.GLFW.glfwInit;
@@ -12,9 +13,18 @@ import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
+import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
 import static org.lwjgl.system.MemoryUtil.NULL;
+
+import org.lwjgl.glfw.GLFWVidMode;
+import org.slf4j.Logger;
+
+import com.steve.utils.LogUtil;
 
 /**
  * The {@code Window} class is responsible for creating and managing a
@@ -27,7 +37,13 @@ import static org.lwjgl.system.MemoryUtil.NULL;
  */
 public class Window {
     private final long window;
+    private final GLFWVidMode mode;
+    private final int monitorWidth;
+    private final int monitorHeight;
 
+    private boolean isFullScreen = false;
+    
+    private final Logger LOGGER = LogUtil.getLogger();
     /**
      * Creates a new window with the specified width, height, and title.
      *
@@ -40,10 +56,20 @@ public class Window {
         init();
 
         window = glfwCreateWindow(width, height, title, NULL, NULL);
+        LOGGER.debug("Created Window");
+
+        mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        monitorWidth = mode.width();
+        monitorHeight = mode.height();
+
+        // Center the window on the screen
+        glfwSetWindowPos(window,
+            (glfwGetVideoMode(glfwGetPrimaryMonitor()).width() - width) / 2,
+            (glfwGetVideoMode(glfwGetPrimaryMonitor()).height() - height) / 2);
 
         // Check.
         if (window == NULL) {
-            System.err.println("Failed to Create Window");
+            LOGGER.error("Failed to Create Window");
             glfwTerminate();
             System.exit(-1);
         }
@@ -51,6 +77,7 @@ public class Window {
         glfwMakeContextCurrent(window);
         createCapabilities();
     }
+    
 
     /**
      * Initializes the GLFW library and sets the window hints for creating
@@ -62,14 +89,17 @@ public class Window {
      */
     private void init() {
         // Initialization glfw.
+        LOGGER.debug("Initializing GLFW");
         glfwInit();
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         // If run on macOS, need this.
         if (isMacOs()) {
+            LOGGER.debug("Running on macOS");
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
         }
+        glfwWindowHint(GLFW_SAMPLES, 4);
     }
 
     /**
@@ -80,6 +110,20 @@ public class Window {
      */
     public long get() {
         return window;
+    }
+
+    public void switchFullScreen() {
+        if (isFullScreen) {
+            glfwSetWindowPos(window,
+                (monitorWidth - 800) / 2,
+                (monitorHeight - 600) / 2);
+            glfwSetWindowSize(window, 800, 600);
+            isFullScreen = false;
+        } else {
+            glfwSetWindowPos(window, 0, 0);
+            glfwSetWindowSize(window, monitorWidth, monitorHeight);
+            isFullScreen = true;
+        }
     }
 
     /**

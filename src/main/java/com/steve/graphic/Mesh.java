@@ -127,7 +127,7 @@ public class Mesh {
                 false, VERTEX_SIZE * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
 
-        // color attribute
+        // normal attribute
         glVertexAttribPointer(1, 3, GL_FLOAT,
                 false, VERTEX_SIZE * Float.BYTES, 3 * Float.BYTES);
         glEnableVertexAttribArray(1);
@@ -172,8 +172,9 @@ public class Mesh {
         return modelUniform;
     }
 
-    public static void setUniform(ShaderProgram shaderProgram) {
-        shaderProgram.addUniform(new Uniform<Matrix4f>("model", new Matrix4f()));
+    private static final Uniform<Matrix4f> staticModelUniform = new Uniform<Matrix4f>("model", new Matrix4f());
+    public static void setupUniform(ShaderProgram shaderProgram) {
+        shaderProgram.addUniform(staticModelUniform);
     }
 
     /**

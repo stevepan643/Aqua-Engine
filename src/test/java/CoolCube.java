@@ -15,13 +15,11 @@ import com.steve.graphic.Material;
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
-import com.steve.graphic.Sphere;
-import com.steve.graphic.Texture;
 import com.steve.graphic.Uniform;
 import com.steve.platform.Window;
 import com.steve.utils.LogUtil;
 
-public class Main {
+public class CoolCube {
 
         public static ShaderProgram shaderProgram;
         public static ShaderProgram shaderProgram2;
@@ -47,7 +45,7 @@ public class Main {
         public static void main(String[] args) {
 
                 window = new Window(
-                                width, height, "Test Game");
+                                width, height, "Cool Cube");
 
                 // If window's size is changing, callback framebuffer_size_callback.
                 glfwSetFramebufferSizeCallback(
@@ -155,7 +153,7 @@ public class Main {
                                 System.gc();
                         }
                         
-                        glfwSetWindowTitle(window.get(), "Test Game - FPS: " + 
+                        glfwSetWindowTitle(window.get(), "Cool Cube - FPS: " + 
                                 String.format("%.2f", fps));
 
                         processInput(window.get(), (float) deltaTime);

@@ -9,7 +9,10 @@ import static org.lwjgl.opengl.GL20.glGetShaderi;
 import static org.lwjgl.opengl.GL20.glShaderSource;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import org.slf4j.Logger;
+
 import com.steve.utils.FileUtil;
+import com.steve.utils.LogUtil;
 
 /**
  * This class saved a shader(such as vertex shader), include source code,
@@ -22,6 +25,8 @@ public class Shader {
     private String source;
     private int type;
     private int shader;
+
+    private final Logger LOGGER = LogUtil.getLogger();
 
     /**
      * Create shader using filepath and type.
@@ -40,9 +45,12 @@ public class Shader {
 
         if (glGetShaderi(this.shader, GL_COMPILE_STATUS) == NULL) {
             String info = glGetShaderInfoLog(this.shader);
-            System.err.println(filepath);
-            System.err.println("Felid to Compile Vertex or Fragment Shader");
-            System.err.println(info);
+            LOGGER.error("Failed to Compile Vertex or Fragment Shader");
+            LOGGER.error("Shader filepath: " + filepath);
+            LOGGER.error("Error information:");
+            for (String line : info.split("\n")) {
+                LOGGER.error(line);
+            }
         }
     }
 

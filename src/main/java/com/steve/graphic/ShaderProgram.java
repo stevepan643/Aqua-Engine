@@ -13,6 +13,10 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+
+import com.steve.utils.LogUtil;
+
 /**
  * Shader program.
  * 
@@ -23,6 +27,8 @@ public class ShaderProgram {
     private final int shaderProgram;
 
     private HashMap<String, Shader> shaders = new HashMap<>();
+    
+    private final Logger LOGGER = LogUtil.getLogger();
 
     /**
      * Create a program.
@@ -45,18 +51,6 @@ public class ShaderProgram {
     }
 
     /**
-     * Detach a shader.
-     * 
-     * @param name Which shader need to detach.
-     * @since 1.0
-     */
-    public void delShader(String name) {
-        glDetachShader(shaderProgram, shaders.get(name).get());
-
-        shaders.remove(name);
-    }
-
-    /**
      * Link all of shaders.
      * 
      * @since 1.0
@@ -65,7 +59,7 @@ public class ShaderProgram {
         glLinkProgram(shaderProgram);
 
         if (glGetProgrami(shaderProgram, GL_LINK_STATUS) == NULL) {
-            System.err.println("Felid to Link Program");
+            LOGGER.error("Failed to Link Shader Program");
         }
     }
 
@@ -76,6 +70,10 @@ public class ShaderProgram {
      */
     public void use() {
         glUseProgram(shaderProgram);
+    }
+
+    public void unused() {
+        glUseProgram(0);
     }
 
     /**
@@ -92,6 +90,12 @@ public class ShaderProgram {
         uniform.setLocation(
                 glGetUniformLocation(shaderProgram, uniform.getName()));
         uniform.update();
+    }
+
+    public void addUniforms(Uniform<?>... uniforms) {
+        for (Uniform<?> uniform : uniforms) {
+            addUniform(uniform);
+        }
     }
 
     /**
