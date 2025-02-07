@@ -3,6 +3,9 @@ package com.steve.utils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * This Class used to read file by filepath.
@@ -27,5 +30,12 @@ public class FileUtil {
         }
         System.err.println("Filed to Read File");
         return "";
+    }
+
+    public static List<String> readLine(String filepath) {
+        String s = read(filepath);
+        Pattern pattern = Pattern.compile("\n");
+        String[] lines = pattern.split(s);
+        return List.of(lines);
     }
 }

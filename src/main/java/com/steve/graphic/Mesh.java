@@ -99,7 +99,7 @@ public class Mesh {
         return createMeshWithColor(newVertices, indices);
     }
 
-    public static Mesh createMeshWithTextAndText(
+    public static Mesh createMeshWithNormalAndText(
             float vertices[], int indices[]) {
         return new Mesh(vertices, indices);
     }

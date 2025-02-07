@@ -1,4 +1,3 @@
-
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
@@ -20,6 +19,7 @@ import com.steve.graphic.Texture;
 import com.steve.graphic.Uniform;
 import com.steve.platform.Window;
 import com.steve.utils.LogUtil;
+import com.steve.utils.ModelUtil;
 
 public class Main {
 
@@ -84,9 +84,14 @@ public class Main {
                         "Test Material"
                 );
                 
-                mesh1 = Cube.createCubeAndScale(0.5f);
+                mesh1 = Cube.createCubeAndScale(0.1f);
 
                 GameObject gb = new GameObject(material, Cube.createCubeAndScale(1.0f));
+                double d1 = glfwGetTime();
+                Mesh mesh = ModelUtil.loadModel("src/main/resources/David head.obj");
+                LOGGER.debug("Load Time: " + (glfwGetTime()- d1));
+                GameObject test = new GameObject(material, mesh);
+                test.getMesh().getTransform().translate(1.0f, 1.0f, 1.0f).scale(0.01f);
 
                 // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glEnable(GL_DEPTH_TEST);
@@ -188,11 +193,20 @@ public class Main {
                         mesh1.render();
                         // shaderProgram.unused();
                         shaderProgram2.use();
-                        shaderProgram2.addUniforms(timeUniform, projUniform, viewUniform, 
+                        shaderProgram2.addUniforms(timeUniform, projUniform, viewUniform, viewPosUniform,
                                                 lightPosition, lightAmbient, lightDiffuse, lightSpecular);
+                        // shaderProgram2.addUniform(timeUniform);
+                        // shaderProgram2.addUniform(projUniform);
+                        // shaderProgram2.addUniform(viewUniform);
+                        // shaderProgram2.addUniform(lightPosition);
+                        // shaderProgram2.addUniform(lightAmbient);
+                        // shaderProgram2.addUniform(lightDiffuse);
+                        // shaderProgram2.addUniform(lightSpecular);
                         shaderProgram2.addUniform(gb.getMesh().getUniform());
                         Mesh.setupUniform(shaderProgram2);
                         gb.render();
+                        shaderProgram2.addUniform(test.getMesh().getUniform());
+                        test.render();
                         // sphere.render();
 
                         window.swapBuffers();

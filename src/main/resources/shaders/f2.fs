@@ -26,6 +26,15 @@ uniform Material    material;
 uniform Light       light;
 uniform float       move_time;
 
+float near = 0.1; 
+float far  = 100.0; 
+
+float LinearizeDepth(float depth) 
+{
+    float z = depth * 2.0 - 1.0; // 转换为 NDC
+    return (2.0 * near * far) / (far + near - z * (far - near));    
+}
+
 void main()
 {
     vec3 norm = normalize(normal);
@@ -39,9 +48,13 @@ void main()
     vec3 ambient = light.ambient * texture(material.diffuse, texCoord).rgb;
     vec3 diffuse = light.diffuse * diff * texture(material.diffuse, texCoord).rgb;
     vec3 specular = light.specular * spec * texture(material.specular, texCoord).rgb;
-    vec3 emission = texture(material.emission,vec2(texCoord.x,texCoord.y+move_time)).rgb;
+    vec3 emission = texture(material.emission, vec2(texCoord.x, texCoord.y + move_time)).rgb;
 
     FragColor = vec4(ambient + diffuse + specular + emission, 1.0);    
     // FragColor = texture(material.emission, texCoord);
+    // FragColor = vec4(vec3(gl_FragCoord.z), 1.0);
+
+    // float depth = LinearizeDepth(gl_FragCoord.z) / far; // 为了演示除以 far
+    // FragColor = vec4(vec3(depth), 1.0);
 
 }

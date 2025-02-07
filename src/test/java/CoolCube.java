@@ -186,7 +186,7 @@ public class CoolCube {
                         mesh1.render();
                         // shaderProgram.unused();
                         shaderProgram2.use();
-                        shaderProgram2.addUniforms(timeUniform, projUniform, viewUniform, 
+                        shaderProgram2.addUniforms(timeUniform, projUniform, viewUniform, viewPosUniform, 
                                                 lightPosition, lightAmbient, lightDiffuse, lightSpecular);
                         shaderProgram2.addUniform(gb.getMesh().getUniform());
                         Mesh.setupUniform(shaderProgram2);
