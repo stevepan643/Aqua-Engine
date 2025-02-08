@@ -31,4 +31,4 @@
 **...**
 
 ## 规范
-参照[这里](./CONTRIBUTING.md)。
+参照[这里](./CONTRIBUTING_CN.md)。
