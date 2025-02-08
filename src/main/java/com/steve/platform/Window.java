@@ -39,7 +39,7 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.slf4j.Logger;
 
-import com.steve.utils.LogUtil;
+import com.steve.util.LogUtil;
 
 /**
  * The {@code Window} class is responsible for creating and managing a

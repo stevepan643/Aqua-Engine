@@ -19,7 +19,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 
-import com.steve.utils.LogUtil;
+import com.steve.util.LogUtil;
 
 public class Camera {
 

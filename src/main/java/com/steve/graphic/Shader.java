@@ -26,8 +26,8 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 import org.slf4j.Logger;
 
-import com.steve.utils.FileUtil;
-import com.steve.utils.LogUtil;
+import com.steve.util.FileUtil;
+import com.steve.util.LogUtil;
 
 /**
  * This class saved a shader(such as vertex shader), include source code,

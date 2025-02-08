@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
- package com.steve.utils;
+ package com.steve.util;
 
 import java.util.ArrayList;
 import java.util.List;
