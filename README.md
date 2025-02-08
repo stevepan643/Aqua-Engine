@@ -21,4 +21,7 @@ This project is a engine, and the way of learning OpenGL (www.learnopengl.com) w
 14. [ ] Let there be even more light.
 15. [x] Loading more complex models.
 16. [ ] Draw item's border.
+17. [ ] Adaptation ImGui.
+18. [ ] Rewrite shader.
+19. [ ] Rewrite mesh, game object, material and modelUtil.
 __...__

@@ -77,6 +77,13 @@ public class Window {
         glfwMakeContextCurrent(window);
         createCapabilities();
     }
+
+    public Window(long window) {
+        this.window = window;
+        this.mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+        this.monitorWidth = mode.width();
+        this.monitorHeight = mode.height();
+    }
     
 
     /**
