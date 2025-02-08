@@ -31,7 +31,7 @@ import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
 import com.steve.graphic.Uniform;
 import com.steve.platform.Window;
-import com.steve.utils.LogUtil;
+import com.steve.util.LogUtil;
 
 public class CoolCube {
 

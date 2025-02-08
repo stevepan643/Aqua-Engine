@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
- package com.steve.utils;
+ package com.steve.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

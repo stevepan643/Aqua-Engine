@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
- package com.steve.utils;
+ package com.steve.util;
 
 import java.io.IOException;
 import java.nio.file.Files;

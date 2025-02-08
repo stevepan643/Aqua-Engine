@@ -29,7 +29,7 @@ import java.util.HashMap;
 
 import org.slf4j.Logger;
 
-import com.steve.utils.LogUtil;
+import com.steve.util.LogUtil;
 
 /**
  * Shader program.

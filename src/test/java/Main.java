@@ -30,8 +30,8 @@ import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
 import com.steve.graphic.Uniform;
 import com.steve.platform.Window;
-import com.steve.utils.LogUtil;
-import com.steve.utils.ObjUtil;
+import com.steve.util.LogUtil;
+import com.steve.util.ObjUtil;
 
 public class Main {
 
@@ -68,23 +68,23 @@ public class Main {
 
                 // Initialization shader(create, compile link and etc).
                 Shader vertex = new Shader(
-                                "src/main/resources/shaders/v.vs",
+                                "src/main/resources/shader/v.vs",
                                 GL_VERTEX_SHADER);
                                 
                 Shader vertex2 = new Shader(
-                        "src/main/resources/shaders/v2.vs",
+                        "src/main/resources/shader/v2.vs",
                         GL_VERTEX_SHADER);
 
                 Shader fragment = new Shader(
-                                "src/main/resources/shaders/f.fs",
+                                "src/main/resources/shader/f.fs",
                                 GL_FRAGMENT_SHADER);
 
                 Shader fragment2 = new Shader(
-                                "src/main/resources/shaders/f2.fs",
+                                "src/main/resources/shader/f2.fs",
                                 GL_FRAGMENT_SHADER);
 
                 Shader fragment3 = new Shader(
-                                "src/main/resources/shaders/f3.fs", 
+                                "src/main/resources/shader/f3.fs", 
                                 GL_FRAGMENT_SHADER);
 
                 shaderProgram = new ShaderProgram();
@@ -110,12 +110,12 @@ public class Main {
                         "Test Material"
                 );
                 
-                mesh1 = ObjUtil.loadModel("src/main/resources/models/Cube.obj");
+                mesh1 = ObjUtil.loadModel("src/main/resources/model/Cube.obj");
 
-                GameObject cube = new GameObject(material, ObjUtil.loadModel("src/main/resources/models/Cube.obj"));
-                GameObject david = new GameObject(material, ObjUtil.loadModel("src/main/resources/models/David head.obj"));
-                GameObject lady = new GameObject(material, ObjUtil.loadModel("src/main/resources/models/CREEPY_LADY_PG_EX2.obj"));
-                GameObject nile = new GameObject(material, ObjUtil.loadModel("src/main/resources/models/nile.obj"));
+                GameObject cube = new GameObject(material, ObjUtil.loadModel("src/main/resources/model/Cube.obj"));
+                GameObject david = new GameObject(material, ObjUtil.loadModel("src/main/resources/model/David head.obj"));
+                GameObject lady = new GameObject(material, ObjUtil.loadModel("src/main/resources/model/CREEPY_LADY_PG_EX2.obj"));
+                GameObject nile = new GameObject(material, ObjUtil.loadModel("src/main/resources/model/nile.obj"));
                 david.getMesh().getTransform().translate(-0.0f, 0.5f, 0.5f);
                 lady.getMesh().getTransform().translate(1.0f, 0.5f, 0.5f).rotateY(45).scale(2.0f);
                 nile.getMesh().getTransform().translate(0.0f, 0.0f, 1.5f).scale(0.5f);
