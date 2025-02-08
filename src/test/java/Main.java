@@ -8,23 +8,21 @@ import org.joml.Vector3f;
 import org.slf4j.Logger;
 
 import com.steve.graphic.Camera;
-import com.steve.graphic.Cube;
 import com.steve.graphic.GameObject;
 import com.steve.graphic.Material;
 import com.steve.graphic.Mesh;
 import com.steve.graphic.Shader;
 import com.steve.graphic.ShaderProgram;
-import com.steve.graphic.Sphere;
-import com.steve.graphic.Texture;
 import com.steve.graphic.Uniform;
 import com.steve.platform.Window;
 import com.steve.utils.LogUtil;
-import com.steve.utils.ModelUtil;
+import com.steve.utils.ObjUtil;
 
 public class Main {
 
         public static ShaderProgram shaderProgram;
         public static ShaderProgram shaderProgram2;
+        public static ShaderProgram shaderProgram3;
         public static Mesh mesh1;
         public static Mesh mesh2;
         public static Mesh mesh3;
@@ -40,7 +38,7 @@ public class Main {
 
         public static Uniform<Matrix4f> projUniform;
         
-        public static float fov = 100.0f;
+        public static float fov = 60.0f;
 
         private final static Logger LOGGER = LogUtil.getLogger();
 
@@ -57,6 +55,10 @@ public class Main {
                 Shader vertex = new Shader(
                                 "src/main/resources/shaders/v.vs",
                                 GL_VERTEX_SHADER);
+                                
+                Shader vertex2 = new Shader(
+                        "src/main/resources/shaders/v2.vs",
+                        GL_VERTEX_SHADER);
 
                 Shader fragment = new Shader(
                                 "src/main/resources/shaders/f.fs",
@@ -64,6 +66,10 @@ public class Main {
 
                 Shader fragment2 = new Shader(
                                 "src/main/resources/shaders/f2.fs",
+                                GL_FRAGMENT_SHADER);
+
+                Shader fragment3 = new Shader(
+                                "src/main/resources/shaders/f3.fs", 
                                 GL_FRAGMENT_SHADER);
 
                 shaderProgram = new ShaderProgram();
@@ -74,8 +80,13 @@ public class Main {
                 shaderProgram2.addShader("vertexShader", vertex);
                 shaderProgram2.addShader("fragmentShader", fragment2);
 
+                shaderProgram3 = new ShaderProgram();
+                shaderProgram3.addShader("vertexShader", vertex2);
+                shaderProgram3.addShader("fragmentShader", fragment3);
+
                 shaderProgram.link();
                 shaderProgram2.link();
+                shaderProgram3.link();
 
                 Material material = new Material(
                         "src/main/resources/container2.png",
@@ -84,19 +95,25 @@ public class Main {
                         "Test Material"
                 );
                 
-                mesh1 = Cube.createCubeAndScale(0.1f);
+                mesh1 = ObjUtil.loadModel("src/main/resources/models/Cube.obj");
 
-                GameObject gb = new GameObject(material, Cube.createCubeAndScale(1.0f));
-                double d1 = glfwGetTime();
-                Mesh mesh = ModelUtil.loadModel("src/main/resources/David head.obj");
-                LOGGER.debug("Load Time: " + (glfwGetTime()- d1));
-                GameObject test = new GameObject(material, mesh);
-                test.getMesh().getTransform().translate(1.0f, 1.0f, 1.0f).scale(0.01f);
+                GameObject cube = new GameObject(material, ObjUtil.loadModel("src/main/resources/models/Cube.obj"));
+                GameObject david = new GameObject(material, ObjUtil.loadModel("src/main/resources/models/David head.obj"));
+                GameObject lady = new GameObject(material, ObjUtil.loadModel("src/main/resources/models/CREEPY_LADY_PG_EX2.obj"));
+                GameObject nile = new GameObject(material, ObjUtil.loadModel("src/main/resources/models/nile.obj"));
+                david.getMesh().getTransform().translate(-0.0f, 0.5f, 0.5f);
+                lady.getMesh().getTransform().translate(1.0f, 0.5f, 0.5f).rotateY(45).scale(2.0f);
+                nile.getMesh().getTransform().translate(0.0f, 0.0f, 1.5f).scale(0.5f);
+                
+                cube.getMesh().getTransform().scale(0.5f);
 
                 // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glEnable(GL_DEPTH_TEST);
                 glfwSwapInterval(0);
                 glEnable(GL_MULT);
+                glEnable(GL_CULL_FACE);
+                glEnable(GL_STENCIL_TEST);
+                glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
                 shaderProgram.use();
 
@@ -112,20 +129,22 @@ public class Main {
                 Uniform<Vector3f> viewPosUniform = new Uniform<Vector3f>(
                                 "viewPos", camera.getPosition());
 
+                mesh1.getTransform()
+                                .translate(-1.0f, 2.0f, 1.5f)
+                                .scale(0.05f);
+                                
                 Uniform<Vector3f> lightPosition = new Uniform<Vector3f>(
-                        "light.position", new Vector3f(1.0f, 1.0f, -0.5f));
+                        "light.position", new Vector3f(-1.5f, 2.0f, 2f));
                 Uniform<Vector3f> lightAmbient = new Uniform<Vector3f>(
-                        "light.ambient", new Vector3f(0.2f, 0.2f, 0.2f));
+                        "light.ambient", new Vector3f(0.1f, 0.1f, 0.1f));
                 Uniform<Vector3f> lightDiffuse = new Uniform<Vector3f>(
-                        "light.diffuse", new Vector3f(0.5f, 0.5f, 0.5f));
+                        "light.diffuse", new Vector3f(1.0f / 1.2f, 0.85f / 1.2f, 0.72f / 1.2f));
                 Uniform<Vector3f> lightSpecular = new Uniform<Vector3f>(
-                        "light.specular", new Vector3f(1.0f, 1.0f, 1.0f));
+                        "light.specular", new Vector3f(0.2f, 0.2f, 0.2f));
 
                 Uniform<Float> timeUniform = new Uniform<Float>(
                         "move_time", 1.0f);
 
-                mesh1.getTransform()
-                                .translate(1.0f, 1.0f, -0.5f);
 
                 glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 glfwSetCursorPosCallback(window.get(), (w, xpos, ypos) -> mouse_callback(w, xpos, ypos));
@@ -137,13 +156,7 @@ public class Main {
                 int frameCount = 0;
                 float fps = 0;
 
-                
-                shaderProgram2.use();
-                shaderProgram2.addUniform(gb.getMaterial().getDiffuseUniform());
-                shaderProgram2.addUniform(gb.getMaterial().getSpecularUniform());
-                shaderProgram2.addUniform(gb.getMaterial().getShininessUniform());
-                shaderProgram2.addUniform(gb.getMaterial().getEmissionUniform());
-
+                // System.gc();
                 while (!window.isShouldClose()) {
                         glfwPollEvents();
 
@@ -167,7 +180,7 @@ public class Main {
                         viewUniform.update();
 
                         glClearColor(0f, 0f, 0f, 1.0f);
-                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
                         if (isChanged) {
                                 projUniform.getValue().setPerspective(
@@ -177,37 +190,30 @@ public class Main {
                                 isChanged = false;
                         }
 
-                        // mesh1.getTransform()
-                        //         .rotateY((float) Math.toRadians(deltaTime *  50f));
-                        // mesh2.getTransform()
-                        //         .rotateY((float) Math.toRadians(deltaTime * -50f));
-                        // gb.getMesh().getTransform()
-                        //         .rotateY((float) Math.toRadians(deltaTime * -50f))
-                        //         .rotateX((float) Math.toRadians(deltaTime * 50f));
-                        timeUniform.setValue((float) glfwGetTime() /3);
+                        timeUniform.setValue((float) glfwGetTime() / 10);
 
                         shaderProgram.use();
                         shaderProgram.addUniform(viewUniform); 
                         shaderProgram.addUniform(projUniform);
                         Mesh.setupUniform(shaderProgram);
                         mesh1.render();
-                        // shaderProgram.unused();
+
                         shaderProgram2.use();
+                        Mesh.setupUniform(shaderProgram2);
                         shaderProgram2.addUniforms(timeUniform, projUniform, viewUniform, viewPosUniform,
                                                 lightPosition, lightAmbient, lightDiffuse, lightSpecular);
-                        // shaderProgram2.addUniform(timeUniform);
-                        // shaderProgram2.addUniform(projUniform);
-                        // shaderProgram2.addUniform(viewUniform);
-                        // shaderProgram2.addUniform(lightPosition);
-                        // shaderProgram2.addUniform(lightAmbient);
-                        // shaderProgram2.addUniform(lightDiffuse);
-                        // shaderProgram2.addUniform(lightSpecular);
-                        shaderProgram2.addUniform(gb.getMesh().getUniform());
-                        Mesh.setupUniform(shaderProgram2);
-                        gb.render();
-                        shaderProgram2.addUniform(test.getMesh().getUniform());
-                        test.render();
-                        // sphere.render();
+                        shaderProgram2.addUniform(cube.getMesh().getUniform());
+                        shaderProgram2.addUniform(cube.getMaterial().getDiffuseUniform());
+                        shaderProgram2.addUniform(cube.getMaterial().getSpecularUniform());
+                        shaderProgram2.addUniform(cube.getMaterial().getShininessUniform());
+                        shaderProgram2.addUniform(cube.getMaterial().getEmissionUniform());
+                        cube.render();
+                        shaderProgram2.addUniform(lady.getMesh().getUniform());
+                        lady.render();
+                        shaderProgram2.addUniform(nile.getMesh().getUniform());
+                        nile.render();
+                        shaderProgram2.addUniform(david.getMesh().getUniform());
+                        david.render();
 
                         window.swapBuffers();
                 }
@@ -324,10 +330,6 @@ public class Main {
                                 (float) width / height, 0.01f, 100f);
                         projUniform.update();
                 }
-        }
-
-        public static float getFPS() {
-                return (float) (1 / glfwGetTime());
         }
 
         public static void cleanup() {

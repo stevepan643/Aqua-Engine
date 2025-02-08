@@ -1,8 +1,5 @@
 package com.steve.graphic;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.slf4j.Logger;
 
 import com.steve.utils.LogUtil;
@@ -30,7 +27,7 @@ public class Material {
         this.shininess = shininess;
         this.id = id;
 
-        LOGGER.debug("Material created with id: " + id);
+        LOGGER.debug("Material created with id: " + this.id);
         this.diffuseUniform = new Uniform<Integer>("material.diffuse", this.diffuse.getTextureID());
         LOGGER.debug("Diffuse texture: " + diffuseUniform.getName());
         this.specularUniform = new Uniform<Integer>("material.specular", this.specular.getTextureID());

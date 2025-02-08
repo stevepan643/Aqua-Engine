@@ -1,6 +1,5 @@
 package com.steve.graphic;
 
-import static org.lwjgl.opengl.GL20.glGetUniformLocation;
 import static org.lwjgl.opengl.GL20.glUniform1f;
 import static org.lwjgl.opengl.GL20.glUniform1i;
 import static org.lwjgl.opengl.GL20.glUniform2f;
@@ -14,9 +13,6 @@ import org.joml.Matrix4f;
 import org.joml.Matrix4fc;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
-import org.slf4j.Logger;
-
-import com.steve.utils.LogUtil;
 
 public class Uniform<T> {
     enum Type {
