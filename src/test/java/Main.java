@@ -53,13 +53,7 @@ import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 
-import com.steve.graphic.Camera;
-import com.steve.graphic.GameObject;
-import com.steve.graphic.Material;
-import com.steve.graphic.Mesh;
-import com.steve.graphic.Shader;
-import com.steve.graphic.ShaderProgram;
-import com.steve.graphic.Uniform;
+import com.steve.graphic.*;
 import com.steve.platform.Window;
 import com.steve.util.LogUtil;
 import com.steve.util.ObjUtil;

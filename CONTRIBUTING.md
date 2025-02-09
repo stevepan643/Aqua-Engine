@@ -23,14 +23,14 @@ This project follows the [Google Java Style Guide](http://hawstein.com/2014/01/2
 
 Additionally, adhere to the following conventions:  
 
-1. **Use `Path` or `URL` instead of `File`** whenever handling file paths.  
+<!-- 1. **Use `Path` or `URL` instead of `File`** whenever handling file paths.  
 2. **Use `@javax.annotation.Nullable`** for method parameters that may be `null`.  
 3. **Use `Optional` as the return type** for methods that may return `null`.  
-4. **Use `@javax.annotation.Nonnull`** for parameters and return values that must not be `null`, and validate parameters using `Validate.notNull()`.  
-5. **Annotate thread-safe classes with `@ThreadSafe`** if they are confirmed or required to be thread-safe.  
-6. **Use JOML interfaces (`Vector3fc`, `Matrix4fc`, etc.)** as method parameter types unless modifications are required.  
-7. **Use singular names for folders, directories, and package names.**  
-8. **Be cautious when using the Stream API** in **sequential** iteration scenarios.  
+4. **Use `@javax.annotation.Nonnull`** for parameters and return values that must not be `null`, and validate parameters using `Validate.notNull()`.   -->
+<!-- 5. **Annotate thread-safe classes with `@ThreadSafe`** if they are confirmed or required to be thread-safe.  
+6. **Use JOML interfaces (`Vector3fc`, `Matrix4fc`, etc.)** as method parameter types unless modifications are required.   -->
+1. **Use singular names for folders, directories, and package names.**  
+<!-- 8. **Be cautious when using the Stream API** in **sequential** iteration scenarios.   -->
 
 ## Commit Message Guidelines  
 

@@ -19,6 +19,15 @@
     "xoffset",
     "yoffset"
   ],
-  "editor.formatOnSave": true,
-  "java.compile.nullAnalysis.mode": "automatic"
+  "java.compile.nullAnalysis.mode": "automatic",
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        // Run whenever any file is saved
+        "match": "\\.java$",
+        "message": "Start",
+        "cmd": "\"google-java-format/google-java-format_windows-x86-64.exe\" -i \"${file}\""
+      }
+    ]
+  }
 }
