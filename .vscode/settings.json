@@ -19,23 +19,15 @@
     "xoffset",
     "yoffset"
   ],
-  "glsllint.additionalStageAssociations": {
-    ".vert": "vert", // for a vertex shader
-    ".vs": "vert", // for a vertex shader
-    ".frag": "frag", // for a fragment shader
-    ".fs": "frag", // for a fragment shader
-    ".gs": "geom", // for a geometry shader
-    ".geom": "geom", // for a geometry shader
-    ".comp": "comp", // for a compute shader
-    ".tesc": "tesc", // for a tessellation control shader
-    ".tese": "tese", // for a tessellation evaluation shader
-    ".rgen": "rgen", // for a ray generation shader
-    ".rint": "rint", // for a ray intersection shader
-    ".rahit": "rahit", // for a ray any hit shader
-    ".rchit": "rchit", // for a ray closest shader
-    ".rmiss": "rmiss", // for a ray miss shader
-    ".rcall": "rcall", // for a ray callable shader
-    ".mesh": "mesh", // for a mesh shader
-    ".task": "task" // for a task shader
+  "java.compile.nullAnalysis.mode": "automatic",
+  "emeraldwalk.runonsave": {
+    "commands": [
+      {
+        // Run whenever any file is saved
+        "match": "\\.java$",
+        "message": "Start",
+        "cmd": "\"google-java-format/google-java-format_windows-x86-64.exe\" -i \"${file}\""
+      }
+    ]
   }
 }

@@ -27,7 +27,7 @@
 17. [ ] 适配 ImGui。
 18. [ ] 重写 Shader。
 19. [ ] 重写 Mesh、GameObject、Material 和 ModelUtil。
-20. [ ] 按照 CONTRIBUTING 指南修改代码。
+20. [x] 按照 CONTRIBUTING 指南修改代码。
 **...**
 
 ## 规范
