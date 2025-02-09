@@ -27,7 +27,7 @@ All source code files, including shaders, are licensed under the Apache License 
 17. [ ] Adapt to ImGui. 
 18. [ ] Rewrite the shader. 
 19. [ ] Rewrite Mesh, GameObject, Material, and ModelUtil. 
-20. [ ] Modify the code according to the CONTRIBUTING guidelines. 
+20. [x] Modify the code according to the CONTRIBUTING guidelines. 
 **...**  
 
 ## Guidelines  
