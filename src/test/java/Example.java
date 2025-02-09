@@ -15,9 +15,13 @@
 
 import java.util.List;
 import java.util.Arrays;
+import javax.annotation.Nonnull;
 
 public class Example {
-    public static void exampleFunction(Integer... args) {
+    public static void exampleFunction(@Nonnull Integer... args) {
+        if (args == null) {
+            throw new IllegalArgumentException("Arguments cannot be null");
+        }
         for (Integer arg : args) {
             System.out.println(arg);
         }
