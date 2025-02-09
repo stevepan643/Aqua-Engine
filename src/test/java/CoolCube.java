@@ -23,7 +23,6 @@ import org.joml.Vector3f;
 import org.slf4j.Logger;
 
 import com.steve.graphic.Camera;
-import com.steve.graphic.Cube;
 import com.steve.graphic.GameObject;
 import com.steve.graphic.Material;
 import com.steve.graphic.Mesh;
@@ -32,6 +31,7 @@ import com.steve.graphic.ShaderProgram;
 import com.steve.graphic.Uniform;
 import com.steve.platform.Window;
 import com.steve.util.LogUtil;
+import com.steve.util.ObjUtil;
 
 public class CoolCube {
 
@@ -96,9 +96,10 @@ public class CoolCube {
                         "Test Material"
                 );
                 
-                mesh1 = Cube.createCubeAndScale(0.5f);
+                mesh1 = ObjUtil.loadModel("src/main/resources/model/cube.obj");
+                mesh1.getTransform().scale(0.5f);
 
-                GameObject gb = new GameObject(material, Cube.createCubeAndScale(1.0f));
+                GameObject gb = new GameObject(material, ObjUtil.loadModel("src/main/resources/model/cube.obj"));
 
                 // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                 glEnable(GL_DEPTH_TEST);
