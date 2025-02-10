@@ -15,26 +15,60 @@
 
 package com.steve.graphic;
 
-public class GameObject {
-  Material material;
-  Mesh mesh;
-  ShaderProgram shaderProgram;
+import com.steve.manager.ShaderManager;
+import java.util.HashMap;
+import org.joml.Matrix4f;
 
-  public GameObject(Material material, Mesh mesh) {
-    this.material = material;
-    this.mesh = mesh;
+public class GameObject {
+  private HashMap<String, Model> objects;
+  private String id;
+
+  public GameObject(String id) {
+    this.objects = new HashMap<>();
+    this.id = id;
+  }
+
+  public void addObject(Model model) {
+    objects.put(model.id, model);
+  }
+
+  public Model getModel(String id) {
+    return objects.get(id);
   }
 
   public void render() {
-    material.use();
-    mesh.render();
+    objects.forEach(
+        (id, model) -> {
+          ShaderManager.render(model);
+        });
   }
 
-  public Mesh getMesh() {
-    return mesh;
-  }
+  public class Model {
 
-  public Material getMaterial() {
-    return material;
+    private Mesh mesh;
+    private Texture texture;
+    private Material material;
+    private String id;
+    private String shader;
+
+    private Matrix4f transform;
+
+    public Model(String id, Mesh mesh, Texture texture, Material material) {
+      this.mesh = mesh;
+      this.texture = texture;
+      this.material = material;
+      this.shader = "default";
+      this.transform = new Matrix4f();
+
+      addObject(this);
+    }
+
+    public void setShader(String shaderID) {
+      this.shader = shaderID;
+    }
+
+    public String getShader() {
+      return shader;
+    }
   }
 }

@@ -30,10 +30,7 @@ public class ImGuiTest extends Application {
   Window window;
 
   @Override
-  protected void configure(Configuration config) {
-    config.setTitle("Dear ImGui is Awesome!");
-    // config.setFullScreen(true);
-  }
+  protected void configure(Configuration config) {}
 
   private float[] value = new float[] {0.0f};
   private ImBoolean ib = new ImBoolean();
@@ -49,12 +46,14 @@ public class ImGuiTest extends Application {
     ImGui.styleColorsDark();
     if (ImGui.begin("Hello ImGUI2", ImGuiWindowFlags.AlwaysAutoResize)) {
       ImGui.text("Hello, World!");
+      ImGui.sameLine();
       ImGui.button("Test", 0, 0);
-      ImGui.checkbox("null", ib);
+
+      ImGui.checkbox("Check Box", ib);
       ImGui.sameLine();
       ImGui.text("Value " + ib);
+
       ImGui.sliderFloat("float", value, 0.0f, 10.0f);
-      ImGui.sameLine();
       ImGui.text("Value " + value[0]);
     }
     ImGui.end();
@@ -64,6 +63,7 @@ public class ImGuiTest extends Application {
   @Override
   protected void preRun() {
     window = new Window(handle);
+    window.setTile("Test ImGUI");
   }
 
   public static void main(String[] args) {

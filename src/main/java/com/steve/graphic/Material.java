@@ -66,6 +66,10 @@ public class Material {
     return emissionUniform;
   }
 
+  public String getID() {
+    return id;
+  }
+
   public void use() {
     diffuse.use();
     specular.use();

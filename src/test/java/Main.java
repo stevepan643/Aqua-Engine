@@ -33,7 +33,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
 import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -173,9 +172,8 @@ public class Main {
     Uniform<Float> timeUniform = new Uniform<>("move_time", 1.0f);
 
     glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window.get(), (w, xpos, ypos) -> mouse_callback(w, xpos, ypos));
-    glfwSetScrollCallback(
-        window.get(), (w, xoffset, yoffset) -> scroll_callback(w, xoffset, yoffset));
+    glfwSetCursorPosCallback(window.get(), Main::mouse_callback);
+    glfwSetScrollCallback(window.get(), Main::scroll_callback);
 
     double lastTime = glfwGetTime();
     double lastFrameTime = lastTime;
@@ -199,7 +197,7 @@ public class Main {
         System.gc();
       }
 
-      glfwSetWindowTitle(window.get(), "Test Game - FPS: " + String.format("%.2f", fps));
+      window.setTile("Test Game - FPS: ", String.format("%.2f", fps));
 
       processInput(window.get(), (float) deltaTime);
       viewUniform.update();

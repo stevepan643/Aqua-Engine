@@ -29,6 +29,7 @@ import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
@@ -142,6 +143,18 @@ public class Window {
       glfwSetWindowSize(window, monitorWidth, monitorHeight);
       isFullScreen = true;
     }
+  }
+
+  public void setTile(String... str) {
+    if (str.length == 1) {
+      glfwSetWindowTitle(window, str[0]);
+      return;
+    }
+    StringBuilder title = new StringBuilder();
+    for (String s : str) {
+      title.append(s);
+    }
+    glfwSetWindowTitle(window, title);
   }
 
   /**

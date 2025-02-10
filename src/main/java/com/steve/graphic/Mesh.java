@@ -54,6 +54,8 @@ public class Mesh {
 
   private final int VERTEX_SIZE = 8;
 
+  private String id;
+
   /**
    * Create a mesh by vertices, color and indices.
    *
@@ -176,6 +178,10 @@ public class Mesh {
 
   public Uniform<Matrix4f> getUniform() {
     return modelUniform;
+  }
+
+  public String getID() {
+    return id;
   }
 
   private static final Uniform<Matrix4f> staticModelUniform =
