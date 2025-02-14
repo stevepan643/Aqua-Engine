@@ -15,64 +15,84 @@
 
 package com.steve.graphic;
 
-import com.steve.util.LogUtil;
-import org.slf4j.Logger;
+import org.joml.Vector3f;
 
 public class Material {
-  private Texture diffuse;
-  private Texture specular;
-  private float shininess;
-  private Texture emission;
-
-  private Uniform<Integer> diffuseUniform;
-  private Uniform<Integer> specularUniform;
-  private Uniform<Float> shininessUniform;
-  private Uniform<Integer> emissionUniform;
 
   private String id;
+  private float Ns; // 反射指數
+  private float Ni; // 折射率
+  private float d; // 漸隱指數     1.0 - 0.0 (完全透明)
+  private float Tr; // 材質透明度   1.0 - 0.0 (完全不透明)
+  private Vector3f Tf; // 濾光折射率
+  private int illum; // 光照糢型
+  private Vector3f Ka; // 環境光
+  private Vector3f Kd; // 散射光
+  private Vector3f Ks; // 鏡面光
+  private Vector3f Ke; // 發射光
 
-  private final Logger LOGGER = LogUtil.getLogger();
+  private Integer mapKa;
+  private Integer mapKd;
+  private Integer mapKs;
+  private Integer mapRefl;
 
-  public Material(String diffuse, String specular, float shininess, String id) {
-    this.diffuse = new Texture(diffuse);
-    this.specular = new Texture(specular);
-    this.emission = new Texture("src/main/resources/matrix.jpg");
-    this.shininess = shininess;
+  public Material(String id) {
     this.id = id;
-
-    LOGGER.debug("Material created with id: " + this.id);
-    this.diffuseUniform = new Uniform<Integer>("material.diffuse", this.diffuse.getTextureID());
-    LOGGER.debug("Diffuse texture: " + diffuseUniform.getName());
-    this.specularUniform = new Uniform<Integer>("material.specular", this.specular.getTextureID());
-    LOGGER.debug("Specular texture: " + specularUniform.getName());
-    this.emissionUniform = new Uniform<Integer>("material.emission", this.emission.getTextureID());
-    LOGGER.debug("Emission texture: " + emissionUniform.getName());
-    this.shininessUniform = new Uniform<Float>("material.shininess", this.shininess);
   }
 
-  public Uniform<Integer> getDiffuseUniform() {
-    return diffuseUniform;
+  public void setNs(float Ns) {
+    this.Ns = Ns;
   }
 
-  public Uniform<Integer> getSpecularUniform() {
-    return specularUniform;
+  public void setNi(float Ni) {
+    this.Ni = Ni;
   }
 
-  public Uniform<Float> getShininessUniform() {
-    return shininessUniform;
+  public void setD(float d) {
+    this.d = d;
   }
 
-  public Uniform<Integer> getEmissionUniform() {
-    return emissionUniform;
+  public void setTr(float Tr) {
+    this.Tr = Tr;
   }
 
-  public String getID() {
-    return id;
+  public void setTf(Vector3f Tf) {
+    this.Tf = Tf;
   }
 
-  public void use() {
-    diffuse.use();
-    specular.use();
-    emission.use();
+  public void setIllum(int illum) {
+    this.illum = illum;
+  }
+
+  public void setKa(Vector3f Ka) {
+    this.Ka = Ka;
+  }
+
+  public void setKd(Vector3f Kd) {
+    this.Kd = Kd;
+  }
+
+  public void setKs(Vector3f Ks) {
+    this.Ks = Ks;
+  }
+
+  public void setKe(Vector3f Ke) {
+    this.Ke = Ke;
+  }
+
+  public void setMapKa(Integer mapKa) {
+    this.mapKa = mapKa;
+  }
+
+  public void setMapKd(Integer mapKd) {
+    this.mapKd = mapKd;
+  }
+
+  public void setMapKs(Integer mapKs) {
+    this.mapKs = mapKs;
+  }
+
+  public void setMapRefl(Integer mapRefl) {
+    this.mapRefl = mapRefl;
   }
 }

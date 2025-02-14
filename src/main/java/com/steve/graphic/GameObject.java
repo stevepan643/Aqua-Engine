@@ -28,7 +28,7 @@ public class GameObject {
     this.id = id;
   }
 
-  public void addObject(Model model) {
+  public void addModel(Model model) {
     objects.put(model.id, model);
   }
 
@@ -36,31 +36,34 @@ public class GameObject {
     return objects.get(id);
   }
 
+  public String getId() {
+    return id;
+  }
+
   public void render() {
     objects.forEach(
         (id, model) -> {
           ShaderManager.render(model);
+          model.mesh.render();
         });
   }
 
   public class Model {
 
     private Mesh mesh;
-    private Texture texture;
     private Material material;
     private String id;
     private String shader;
 
     private Matrix4f transform;
 
-    public Model(String id, Mesh mesh, Texture texture, Material material) {
+    public Model(String id, Mesh mesh, Material material) {
       this.mesh = mesh;
-      this.texture = texture;
       this.material = material;
       this.shader = "default";
       this.transform = new Matrix4f();
 
-      addObject(this);
+      addModel(this);
     }
 
     public void setShader(String shaderID) {

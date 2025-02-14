@@ -15,6 +15,8 @@
 
 package com.steve.util;
 
+import com.steve.graphic.GameObject;
+import com.steve.graphic.Material;
 import com.steve.graphic.Mesh;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +74,7 @@ public class ObjUtil {
     }
   }
 
-  public static Mesh loadModel(String filepath) {
+  public static GameObject loadModel(String filepath) {
     List<String> lines = FileUtil.readLine(filepath);
 
     List<Vector3f> vertices = new ArrayList<>();
@@ -80,6 +82,10 @@ public class ObjUtil {
     List<Vector3f> normals = new ArrayList<>();
     List<Face> faces = new ArrayList<>();
 
+    GameObject o =
+        new GameObject(filepath.substring(filepath.lastIndexOf("/"), filepath.lastIndexOf(".")));
+    String id = "";
+    boolean isFirst = false;
     for (String line : lines) {
       String[] tokens = line.split("\\s+");
       switch (tokens[0]) {
@@ -103,12 +109,24 @@ public class ObjUtil {
         case "f":
           faces.add(new Face(tokens[1], tokens[2], tokens[3]));
           break;
+        case "o":
+          if (!isFirst) {
+            isFirst = !isFirst;
+            id = tokens[1];
+            break;
+          }
+          o.new Model(id, generateMesh(vertices, textures, normals, faces), new Material("test"));
+          System.out.println("created 1 object " + id);
+          id = tokens[1];
+          break;
         default:
           break;
       }
     }
 
-    return generateMesh(vertices, textures, normals, faces);
+    o.new Model(id, generateMesh(vertices, textures, normals, faces), new Material("test"));
+    System.out.println("created 1 object " + id);
+    return o;
   }
 
   private static Mesh generateMesh(

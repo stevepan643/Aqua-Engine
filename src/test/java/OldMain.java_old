@@ -13,18 +13,46 @@
  * limitations under the License.
  */
 
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
+import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_DISABLED;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_D;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_F11;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_S;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_W;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
+import static org.lwjgl.glfw.GLFW.glfwGetKey;
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwSetCursorPosCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetFramebufferSizeCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
+import static org.lwjgl.glfw.GLFW.glfwSetScrollCallback;
+import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
+import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
+import static org.lwjgl.glfw.GLFW.glfwTerminate;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11.GL_KEEP;
+import static org.lwjgl.opengl.GL11.GL_MULT;
+import static org.lwjgl.opengl.GL11.GL_REPLACE;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_STENCIL_TEST;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glStencilOp;
+import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 
-import com.steve.graphic.Camera;
-import com.steve.graphic.GameObject;
-import com.steve.graphic.Material;
-import com.steve.graphic.Mesh;
-import com.steve.graphic.Shader;
-import com.steve.graphic.ShaderProgram;
-import com.steve.graphic.Uniform;
+import com.steve.graphic.*;
 import com.steve.platform.Window;
 import com.steve.util.LogUtil;
 import com.steve.util.ObjUtil;
@@ -32,10 +60,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 
-public class CoolCube {
+public class OldMain {
 
   public static ShaderProgram shaderProgram;
   public static ShaderProgram shaderProgram2;
+  public static ShaderProgram shaderProgram3;
   public static Mesh mesh1;
   public static Mesh mesh2;
   public static Mesh mesh3;
@@ -51,24 +80,24 @@ public class CoolCube {
 
   public static Uniform<Matrix4f> projUniform;
 
-  public static float fov = 100.0f;
+  public static float fov = 60.0f;
 
   private static final Logger LOGGER = LogUtil.getLogger();
 
   public static void main(String[] args) {
 
-    window = new Window(width, height, "Cool Cube");
+    window = new Window(width, height, "Test Game");
 
     // If window's size is changing, callback framebuffer_size_callback.
     glfwSetFramebufferSizeCallback(
         window.get(), (w, width, height) -> framebuffer_size_callback(w, width, height));
 
-    // Initialization shader(create, compile link and etc).
+    // Initialization shader(create, compile link etc).
     Shader vertex = new Shader("src/main/resources/shaders/v.vs", GL_VERTEX_SHADER);
-
+    Shader vertex2 = new Shader("src/main/resources/shaders/v2.vs", GL_VERTEX_SHADER);
     Shader fragment = new Shader("src/main/resources/shaders/f.fs", GL_FRAGMENT_SHADER);
-
     Shader fragment2 = new Shader("src/main/resources/shaders/f2.fs", GL_FRAGMENT_SHADER);
+    Shader fragment3 = new Shader("src/main/resources/shaders/f3.fs", GL_FRAGMENT_SHADER);
 
     shaderProgram = new ShaderProgram();
     shaderProgram.addShader("vertexShader", vertex);
@@ -78,8 +107,13 @@ public class CoolCube {
     shaderProgram2.addShader("vertexShader", vertex);
     shaderProgram2.addShader("fragmentShader", fragment2);
 
+    shaderProgram3 = new ShaderProgram();
+    shaderProgram3.addShader("vertexShader", vertex2);
+    shaderProgram3.addShader("fragmentShader", fragment3);
+
     shaderProgram.link();
     shaderProgram2.link();
+    shaderProgram3.link();
 
     Material material =
         new Material(
@@ -88,59 +122,65 @@ public class CoolCube {
             64.0f,
             "Test Material");
 
-    mesh1 = ObjUtil.loadModel("src/main/resources/model/cube.obj");
-    mesh1.getTransform().scale(0.5f);
+    mesh1 = ObjUtil.loadModel("src/main/resources/model/Cube.obj");
 
-    GameObject gb =
-        new GameObject(material, ObjUtil.loadModel("src/main/resources/model/cube.obj"));
+    GameObject cube =
+        new GameObject(material, ObjUtil.loadModel("src/main/resources/model/Cube.obj"));
+    GameObject david =
+        new GameObject(material, ObjUtil.loadModel("src/main/resources/model/David head.obj"));
+    GameObject lady =
+        new GameObject(
+            material, ObjUtil.loadModel("src/main/resources/model/CREEPY_LADY_PG_EX2.obj"));
+    GameObject nile =
+        new GameObject(material, ObjUtil.loadModel("src/main/resources/model/nile.obj"));
+    david.getMesh().getTransform().translate(-0.0f, 0.5f, 0.5f);
+    lady.getMesh().getTransform().translate(1.0f, 0.5f, 0.5f).rotateY(45).scale(2.0f);
+    nile.getMesh().getTransform().translate(0.0f, 0.0f, 1.5f).scale(0.5f);
+
+    cube.getMesh().getTransform().scale(0.5f);
 
     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glEnable(GL_DEPTH_TEST);
     glfwSwapInterval(0);
     glEnable(GL_MULT);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
     shaderProgram.use();
 
     projUniform =
-        new Uniform<Matrix4f>(
+        new Uniform<>(
             "proj",
             new Matrix4f()
                 .perspective((float) Math.toRadians(fov), (float) width / height, 0.01f, 100f));
 
-    Uniform<Matrix4f> viewUniform = new Uniform<Matrix4f>("view", camera.getViewMatrix());
+    Uniform<Matrix4f> viewUniform = new Uniform<>("view", camera.getViewMatrix());
 
-    Uniform<Vector3f> viewPosUniform = new Uniform<Vector3f>("viewPos", camera.getPosition());
+    Uniform<Vector3f> viewPosUniform = new Uniform<>("viewPos", camera.getPosition());
+
+    mesh1.getTransform().translate(-1.0f, 2.0f, 1.5f).scale(0.05f);
 
     Uniform<Vector3f> lightPosition =
-        new Uniform<Vector3f>("light.position", new Vector3f(1.0f, 1.0f, -0.5f));
-    Uniform<Vector3f> lightAmbient =
-        new Uniform<Vector3f>("light.ambient", new Vector3f(0.2f, 0.2f, 0.2f));
+        new Uniform<>("light.position", new Vector3f(-1.5f, 2.0f, 2f));
+    Uniform<Vector3f> lightAmbient = new Uniform<>("light.ambient", new Vector3f(0.1f, 0.1f, 0.1f));
     Uniform<Vector3f> lightDiffuse =
-        new Uniform<Vector3f>("light.diffuse", new Vector3f(0.5f, 0.5f, 0.5f));
+        new Uniform<>("light.diffuse", new Vector3f(1.0f / 1.2f, 0.85f / 1.2f, 0.72f / 1.2f));
     Uniform<Vector3f> lightSpecular =
-        new Uniform<Vector3f>("light.specular", new Vector3f(1.0f, 1.0f, 1.0f));
+        new Uniform<>("light.specular", new Vector3f(0.2f, 0.2f, 0.2f));
 
-    Uniform<Float> timeUniform = new Uniform<Float>("move_time", 1.0f);
-
-    mesh1.getTransform().translate(1.0f, 1.0f, -0.5f);
+    Uniform<Float> timeUniform = new Uniform<>("move_time", 1.0f);
 
     glfwSetInputMode(window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    glfwSetCursorPosCallback(window.get(), (w, xpos, ypos) -> mouse_callback(w, xpos, ypos));
-
-    glfwSetScrollCallback(
-        window.get(), (w, xoffset, yoffset) -> scroll_callback(w, xoffset, yoffset));
+    glfwSetCursorPosCallback(window.get(), OldMain::mouse_callback);
+    glfwSetScrollCallback(window.get(), OldMain::scroll_callback);
 
     double lastTime = glfwGetTime();
     double lastFrameTime = lastTime;
     int frameCount = 0;
     float fps = 0;
 
-    shaderProgram2.use();
-    shaderProgram2.addUniform(gb.getMaterial().getDiffuseUniform());
-    shaderProgram2.addUniform(gb.getMaterial().getSpecularUniform());
-    shaderProgram2.addUniform(gb.getMaterial().getShininessUniform());
-    shaderProgram2.addUniform(gb.getMaterial().getEmissionUniform());
-
+    // System.gc();
     while (!window.isShouldClose()) {
       glfwPollEvents();
 
@@ -157,13 +197,13 @@ public class CoolCube {
         System.gc();
       }
 
-      glfwSetWindowTitle(window.get(), "Cool Cube - FPS: " + String.format("%.2f", fps));
+      window.setTile("Test Game - FPS: ", String.format("%.2f", fps));
 
       processInput(window.get(), (float) deltaTime);
       viewUniform.update();
 
       glClearColor(0f, 0f, 0f, 1.0f);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
       if (isChanged) {
         projUniform
@@ -173,22 +213,16 @@ public class CoolCube {
         isChanged = false;
       }
 
-      // mesh1.getTransform()
-      // .rotateY((float) Math.toRadians(deltaTime * 50f));
-      // mesh2.getTransform()
-      // .rotateY((float) Math.toRadians(deltaTime * -50f));
-      // gb.getMesh().getTransform()
-      // .rotateY((float) Math.toRadians(deltaTime * -50f))
-      // .rotateX((float) Math.toRadians(deltaTime * 50f));
-      timeUniform.setValue((float) glfwGetTime() / 3);
+      timeUniform.setValue((float) glfwGetTime() / 10);
 
       shaderProgram.use();
       shaderProgram.addUniform(viewUniform);
       shaderProgram.addUniform(projUniform);
       Mesh.setupUniform(shaderProgram);
       mesh1.render();
-      // shaderProgram.unused();
+
       shaderProgram2.use();
+      Mesh.setupUniform(shaderProgram2);
       shaderProgram2.addUniforms(
           timeUniform,
           projUniform,
@@ -198,10 +232,18 @@ public class CoolCube {
           lightAmbient,
           lightDiffuse,
           lightSpecular);
-      shaderProgram2.addUniform(gb.getMesh().getUniform());
-      Mesh.setupUniform(shaderProgram2);
-      gb.render();
-      // sphere.render();
+      shaderProgram2.addUniform(cube.getMesh().getUniform());
+      shaderProgram2.addUniform(cube.getMaterial().getDiffuseUniform());
+      shaderProgram2.addUniform(cube.getMaterial().getSpecularUniform());
+      shaderProgram2.addUniform(cube.getMaterial().getShininessUniform());
+      shaderProgram2.addUniform(cube.getMaterial().getEmissionUniform());
+      cube.render();
+      shaderProgram2.addUniform(lady.getMesh().getUniform());
+      lady.render();
+      shaderProgram2.addUniform(nile.getMesh().getUniform());
+      nile.render();
+      shaderProgram2.addUniform(david.getMesh().getUniform());
+      david.render();
 
       window.swapBuffers();
     }
@@ -211,15 +253,15 @@ public class CoolCube {
 
   public static void framebuffer_size_callback(long window, int width, int height) {
     glViewport(0, 0, width, height);
-    Main.width = width;
-    Main.height = height;
+    OldMain.width = width;
+    OldMain.height = height;
     isChanged = true;
   }
 
   private static boolean lastState = false;
 
   public static void processInput(long window, float deltaTime) {
-    float cameraSpeed = 1.0f * deltaTime;
+    float cameraSpeed = deltaTime;
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(window, true);
@@ -245,7 +287,7 @@ public class CoolCube {
     if (glfwGetKey(window, GLFW_KEY_F11) == GLFW_PRESS) {
       if (!lastState) {
         lastState = true;
-        Main.window.switchFullScreen();
+        OldMain.window.switchFullScreen();
       }
     } else {
       lastState = false;
@@ -286,7 +328,9 @@ public class CoolCube {
     }
 
     yaw = yaw % 360.0f;
-    if (yaw < 0.0f) yaw += 360.0f;
+    if (yaw < 0.0f) {
+      yaw += 360.0f;
+    }
 
     camera.lookTo(yaw, pitch);
   }
@@ -314,10 +358,6 @@ public class CoolCube {
           .setPerspective((float) Math.toRadians(fov), (float) width / height, 0.01f, 100f);
       projUniform.update();
     }
-  }
-
-  public static float getFPS() {
-    return (float) (1 / glfwGetTime());
   }
 
   public static void cleanup() {
