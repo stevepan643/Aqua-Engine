@@ -27,6 +27,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
@@ -35,10 +36,14 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL.createCapabilities;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
+import com.steve.manager.Configuration;
 import com.steve.util.LogUtil;
-import javax.annotation.Nonnull;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.slf4j.Logger;
 
@@ -56,6 +61,8 @@ public class Window {
   private final int monitorWidth;
   private final int monitorHeight;
 
+  private float[] bg = new float[3];
+
   private boolean isFullScreen = false;
 
   private final Logger LOGGER = LogUtil.getLogger();
@@ -68,7 +75,7 @@ public class Window {
    * @param title the title of the window
    * @since 1.0
    */
-  public Window(int width, int height, @Nonnull String title) {
+  public Window(int width, int height, String title) {
     init();
     window = glfwCreateWindow(width, height, title, NULL, NULL);
     LOGGER.debug("Created Window");
@@ -92,6 +99,10 @@ public class Window {
 
     glfwMakeContextCurrent(window);
     createCapabilities();
+  }
+
+  public Window(Configuration conf) {
+    this(conf.width, conf.height, conf.title);
   }
 
   public Window(long window) {
@@ -157,6 +168,13 @@ public class Window {
     glfwSetWindowTitle(window, title);
   }
 
+  public void setBgColor(short r, short g, short b) {
+    bg[0] = r / 255.f;
+    bg[1] = g / 255.f;
+    bg[2] = b / 255.f;
+    LOGGER.debug("{}, {} {} {}", bg, r, g, b);
+  }
+
   /**
    * Checks if the window should close.
    *
@@ -174,8 +192,24 @@ public class Window {
    *
    * @since 1.0
    */
+  @Deprecated
   public void swapBuffers() {
     glfwSwapBuffers(window);
+  }
+
+  public void clearBuffer() {
+    glClearColor(bg[0], bg[1], bg[2], 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  }
+
+  public void renderBuffer() {
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+  }
+
+  @Deprecated
+  public void pollEvents() {
+    glfwPollEvents();
   }
 
   /**

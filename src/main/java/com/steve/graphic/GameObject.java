@@ -73,5 +73,9 @@ public class GameObject {
     public String getShader() {
       return shader;
     }
+
+    public Matrix4f getTransform() {
+      return transform;
+    }
   }
 }

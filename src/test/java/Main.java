@@ -1,44 +1,30 @@
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.glfwGetKey;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowShouldClose;
-
-import com.steve.manager.GameObjectManager;
-import com.steve.manager.ShaderManager;
-import com.steve.platform.Window;
+import com.steve.manager.Application;
+import com.steve.manager.Configuration;
+import com.steve.manager.ObjectManager;
+import com.steve.util.LogUtil;
 import com.steve.util.ObjUtil;
-import imgui.app.Application;
-import imgui.app.Configuration;
+import org.slf4j.Logger;
 
 public class Main extends Application {
 
-  Window window;
+  Logger LOGGER = LogUtil.getLogger();
 
   @Override
-  protected void configure(Configuration config) {}
+  protected void config(Configuration conf) {}
 
   @Override
   protected void preRun() {
-    window = new Window(handle);
-    ShaderManager.init();
-    GameObjectManager.init();
+    LOGGER.info("Hello");
 
-    GameObjectManager.addObject(ObjUtil.loadModel("src/main/resources/model/objTest.obj"));
+    ObjectManager.addObject(ObjUtil.loadModel("model/cube.obj"));
   }
 
   @Override
-  public void process() {
-    processInput(handle);
-
-    GameObjectManager.render();
+  protected void process() {
+    // ObjectManager.render();
   }
 
   public static void main(String[] args) {
     launch(new Main());
-  }
-
-  public static void processInput(long window) {
-
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
   }
 }

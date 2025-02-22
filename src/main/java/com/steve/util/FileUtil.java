@@ -15,6 +15,7 @@
 
 package com.steve.util;
 
+import com.steve.manager.PathManager;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -37,7 +38,7 @@ public class FileUtil {
    */
   public static String read(String filepath) {
     try {
-      return Files.readString(Paths.get(filepath));
+      return Files.readString(Paths.get(PathManager.RES_ROOT + filepath));
     } catch (IOException e) {
       e.printStackTrace();
     }

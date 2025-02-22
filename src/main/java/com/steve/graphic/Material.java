@@ -40,56 +40,137 @@ public class Material {
     this.id = id;
   }
 
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(String.format("Material<%s>: \n", id));
+    sb.append(String.format(" Ns: %f \n", Ns));
+    sb.append(String.format(" Ni: %f \n", Ni));
+    sb.append(String.format(" d: %f \n", d));
+    sb.append(String.format(" Tr: %f \n", Tr));
+    if (Tf != null) sb.append(String.format(" Tf: %s \n", Tf));
+    sb.append(String.format(" illum: %d \n", illum));
+    if (Ka != null) sb.append(String.format(" Ka: %s \n", Ka));
+    if (Kd != null) sb.append(String.format(" Kd: %s \n", Kd));
+    if (Ks != null) sb.append(String.format(" Ks: %s \n", Ks));
+    if (Ke != null) sb.append(String.format(" Ke: %s \n", Ke));
+    if (mapKa != null) sb.append(String.format(" mapKa: %s \n", mapKa));
+    if (mapKd != null) sb.append(String.format(" mapKd: %s \n", mapKd));
+    if (mapKs != null) sb.append(String.format(" mapKs: %s \n", mapKs));
+    if (mapRefl != null) sb.append(String.format(" mapRefl: %s", mapRefl));
+    return sb.toString();
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public float getNs() {
+    return Ns;
+  }
+
   public void setNs(float Ns) {
     this.Ns = Ns;
+  }
+
+  public float getNi() {
+    return Ni;
   }
 
   public void setNi(float Ni) {
     this.Ni = Ni;
   }
 
+  public float getD() {
+    return d;
+  }
+
   public void setD(float d) {
     this.d = d;
+  }
+
+  public float getTr() {
+    return Tr;
   }
 
   public void setTr(float Tr) {
     this.Tr = Tr;
   }
 
+  public Vector3f getTf() {
+    return Tf;
+  }
+
   public void setTf(Vector3f Tf) {
     this.Tf = Tf;
+  }
+
+  public int getIllum() {
+    return illum;
   }
 
   public void setIllum(int illum) {
     this.illum = illum;
   }
 
+  public Vector3f getKa() {
+    return Ka;
+  }
+
   public void setKa(Vector3f Ka) {
     this.Ka = Ka;
+  }
+
+  public Vector3f getKd() {
+    return Kd;
   }
 
   public void setKd(Vector3f Kd) {
     this.Kd = Kd;
   }
 
+  public Vector3f getKs() {
+    return Ks;
+  }
+
   public void setKs(Vector3f Ks) {
     this.Ks = Ks;
+  }
+
+  public Vector3f getKe() {
+    return Ke;
   }
 
   public void setKe(Vector3f Ke) {
     this.Ke = Ke;
   }
 
+  public Integer getMapKa() {
+    return mapKa;
+  }
+
   public void setMapKa(Integer mapKa) {
     this.mapKa = mapKa;
+  }
+
+  public Integer getMapKd() {
+    return mapKd;
   }
 
   public void setMapKd(Integer mapKd) {
     this.mapKd = mapKd;
   }
 
+  public Integer getMapKs() {
+    return mapKs;
+  }
+
   public void setMapKs(Integer mapKs) {
     this.mapKs = mapKs;
+  }
+
+  public Integer getMapRefl() {
+    return mapRefl;
   }
 
   public void setMapRefl(Integer mapRefl) {
