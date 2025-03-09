@@ -6,6 +6,7 @@ import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,6 +20,8 @@ import org.jetbrains.annotations.NotNull;
 public class ResourceLoader {
   /** 默认根目录。 */
   public static final String DEFAULT_ROOT = "src/main/resources/";
+
+  @Setter public static String ROOT = DEFAULT_ROOT;
 
   /**
    * 加载着色器。
@@ -36,7 +39,7 @@ public class ResourceLoader {
         };
     try {
       return Files.readString(
-          Paths.get(DEFAULT_ROOT + identifier.getNamespace() + "/" + identifier.getId() + ext));
+          Paths.get(ROOT + identifier.getNamespace() + "/" + identifier.getId() + ext));
     } catch (IOException e) {
       e.printStackTrace();
     }

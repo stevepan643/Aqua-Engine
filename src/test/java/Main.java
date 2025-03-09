@@ -13,7 +13,6 @@ public class Main extends Application {
   @Override
   protected void config(WindowConfiguration configuration) {
     configuration.setTitle("Test");
-    configuration.setBgColor(new BackgroundColor(63, 63, 63));
   }
 
   @Override
@@ -23,15 +22,16 @@ public class Main extends Application {
     log.debug("BASIC_SHADER: {}", Registries.PROGRAM.getID(ShaderPrograms.BASIC_SHADER));
     Mesh mesh =
         new Mesh(
-            new float[] {0.5f, -0.5f, -1, -0.5f, -0.5f, -1, 0, 0.5f, -1},
+            new float[] {0.5f, -0.5f, -1, 1, 0, 0, -0.5f, -0.5f, -1, 0, 1, 0, 0, 0.5f, -1, 0, 0, 1},
             new int[] {0, 1, 2},
-            Mesh.VERTEX);
+            Mesh.VERTEX | Mesh.COLOR);
     Registry.register(Registries.MESH, Identifier.of("mesh", "test"), mesh);
+    ShaderPrograms.BASIC_SHADER.use();
+    ShaderPrograms.BASIC_SHADER.setUniform("", mesh.getType());
   }
 
   @Override
   protected void process() {
-    Registries.PROGRAM.get(Identifier.of("program", "basic_shader")).use();
     Registries.MESH.get(Identifier.of("mesh", "test")).render();
   }
 

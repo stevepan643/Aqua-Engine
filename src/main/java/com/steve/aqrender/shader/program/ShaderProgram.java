@@ -66,6 +66,19 @@ public abstract class ShaderProgram {
     return Registries.SHADER.getID(FRAGMENT_SHADER);
   }
 
+  /**
+   * 设置uniform变量。 <font color="Red">(使用前确保使用的渲染程序已覆盖该方法, 同时请不要在复写时调用super(), 除非你想让程序崩溃)</font>
+   *
+   * @param name uniform变量的名称
+   * @param value uniform变量的值
+   * @throws UnsupportedOperationException 如果渲染程序未覆盖任然使用
+   * @since March 9, 2025
+   */
+  public void setUniform(String name, Object value) {
+    throw new UnsupportedOperationException(
+        String.format("This shader program(%s) does not support uniforms.", id));
+  }
+
   // 链接着色器。
   private void link() {
     glAttachShader(handle, VERTEX_SHADER.getHandle());
