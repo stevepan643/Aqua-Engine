@@ -25,6 +25,7 @@ import static org.lwjgl.opengl.GL11.glViewport;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
 import com.steve.aqrender.config.WindowConfiguration;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +43,10 @@ public class Window {
   private int height;
   private String title;
   private BackgroundColor bgColor;
+
+  private long lastTime;
+  @Getter private float deltaTime; // ns
+  @Getter private int fps;
 
   protected void init(@NotNull WindowConfiguration configuration) {
     initGLFW();
@@ -90,11 +95,19 @@ public class Window {
   }
 
   protected void runFrame() {
+    calculate();
     clearBuffer();
     beforeProcess();
     process();
     afterProcess();
     renderBuffer();
+  }
+
+  private void calculate() {
+    long now = System.nanoTime();
+    deltaTime = (now - lastTime);
+    lastTime = now;
+    fps = (int) (1 / getDeltaTime() * 1000_000_000.0);
   }
 
   // 清除Buffer
