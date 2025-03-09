@@ -10,11 +10,12 @@ import org.jetbrains.annotations.NotNull;
  * @author Steve Pan, jane5598141@gmail.com
  * @since March 8, 2025
  */
+@Getter
 public class Identifier implements Comparable<Identifier> {
   private static final String SEPARATOR = ":";
 
-  @Getter private final String namespace;
-  @Getter private final String id;
+  private final String namespace;
+  private final String id;
 
   // 创建Identifier。
   private Identifier(@NotNull final String namespace, @NotNull final String id) {

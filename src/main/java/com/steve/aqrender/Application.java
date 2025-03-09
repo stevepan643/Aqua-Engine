@@ -8,7 +8,16 @@ import org.jetbrains.annotations.NotNull;
 import uk.org.lidalia.sysoutslf4j.context.SysOutOverSLF4J;
 
 /**
- * 继承了{@link Window}
+ * 继承了{@link Window}, 程序一般形式, 提供各运行时函数。
+ *
+ * <table>
+ *     <tr>{@link #config(WindowConfiguration)}</tr>
+ *     <tr>{@link #beforeLoop()}</tr>
+ *     <tr>{@link Window#beforeProcess()}</tr>
+ *     <tr>{@link Window#process()}</tr>
+ *     <tr>{@link Window#afterProcess()}</tr>
+ *     <tr>{@link #afterLoop()}</tr>
+ * </table>
  *
  * @author Steve Pan, jane5598141@gmail.com
  * @since March 8, 2025

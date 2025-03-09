@@ -116,6 +116,11 @@ public class Window {
    */
   protected void beforeProcess() {}
 
+  /**
+   * 处理函数, 渲染前被调用
+   *
+   * @since March 8, 2025
+   */
   protected void process() {}
 
   /**
