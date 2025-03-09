@@ -1,9 +1,9 @@
 *.log
 *.DS_Store
-target/*
+target/
 # src/main/resources/*
-.VSCodeCounter/*
-.idea/*
+.VSCodeCounter/
+.idea/
 imgui.ini
 google-java-format/google-java-format_windows-x86-64.exe
-.metadata/*
+.metadata/
