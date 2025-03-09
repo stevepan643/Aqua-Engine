@@ -15,6 +15,7 @@ import static org.lwjgl.opengl.GL15C.glGenBuffers;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL30;
@@ -44,12 +45,14 @@ public class Mesh {
    *  <tr><td>{@link #TEXTURE}</td><td>贴图</td><td>2位</td></tr>
    * </table>
    */
-  private final int type;
+  @Getter private final int type;
 
   public static int VERTEX = 0b0001;
   public static int NORMAL = 0b0010;
   public static int TEXTURE = 0b0100;
   public static int COLOR = 0b1000;
+
+  public static int ALL = 0b1111;
 
   /**
    * 创建和绑定网格。
@@ -102,21 +105,29 @@ public class Mesh {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL15.GL_STATIC_DRAW);
 
-    int times =
-        ((type & VERTEX) == VERTEX ? 1 : 0)
-            + ((type & COLOR) == COLOR ? 1 : 0)
-            + ((type & NORMAL) == NORMAL ? 1 : 0);
     int i = 0;
-    for (; i < times; ++i) {
-      glVertexAttribPointer(
-          i, 3, GL_FLOAT, false, vertexSize * Float.BYTES, (long) i * 3 * Float.BYTES);
-      glEnableVertexAttribArray(i);
+    if ((type & VERTEX) == VERTEX) {
+      glVertexAttribPointer(0, 3, GL_FLOAT, false, vertexSize * Float.BYTES, 0);
+      glEnableVertexAttribArray(0);
+      i++;
     }
 
-    if ((type & VERTEX) == VERTEX) {
-      glVertexAttribPointer(
-          i, 2, GL_FLOAT, false, vertexSize * Float.BYTES, (long) i * 3 * Float.BYTES);
-      glEnableVertexAttribArray(i);
+    if ((type & NORMAL) == NORMAL) {
+      glVertexAttribPointer(1, 3, GL_FLOAT, false, vertexSize * Float.BYTES, i * 3 * Float.BYTES);
+      glEnableVertexAttribArray(1);
+      i++;
+    }
+
+    if ((type & COLOR) == COLOR) {
+      glVertexAttribPointer(2, 3, GL_FLOAT, false, vertexSize * Float.BYTES, i * 3 * Float.BYTES);
+      glEnableVertexAttribArray(2);
+      i++;
+    }
+
+    if ((type & TEXTURE) == TEXTURE) {
+      glVertexAttribPointer(3, 2, GL_FLOAT, false, vertexSize * Float.BYTES, i * 2 * Float.BYTES);
+      glEnableVertexAttribArray(3);
+      i++;
     }
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
