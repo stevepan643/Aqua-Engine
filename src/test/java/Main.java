@@ -7,12 +7,15 @@ import com.steve.aqrender.shader.Shaders;
 import com.steve.aqrender.shader.program.ShaderPrograms;
 import com.steve.aqrender.util.Identifier;
 import lombok.extern.slf4j.Slf4j;
+import org.joml.Matrix4f;
+import program.OPrograms;
 
 @Slf4j
 public class Main extends Application {
   @Override
   protected void config(WindowConfiguration configuration) {
     configuration.setTitle("Test");
+    m = new Matrix4f().perspective((float) Math.toRadians(60.0f), (float) configuration.getWidth() / configuration.getHeight(), 0.1f, 1000.f);
   }
 
   @Override
@@ -34,15 +37,23 @@ public class Main extends Application {
     Registry.register(Registries.MESH, Identifier.of("mesh", "test2"), mesh2);
   }
 
+  Matrix4f m;
+
   @Override
   protected void process() {
     ShaderPrograms.BASIC_SHADER.use();
     ShaderPrograms.BASIC_SHADER.setUniform(
         "", Registries.MESH.get(Identifier.of("mesh", "test1")).getType());
     Registries.MESH.get(Identifier.of("mesh", "test1")).render();
-    ShaderPrograms.BASIC_SHADER.setUniform(
-        "", Registries.MESH.get(Identifier.of("mesh", "test2")).getType());
+
+    OPrograms.P.use();
+    OPrograms.P.setUniform("proj", m);
     Registries.MESH.get(Identifier.of("mesh", "test2")).render();
+  }
+
+  @Override
+  protected void onResize(int width, int height) {
+    m = new Matrix4f().perspective((float) Math.toRadians(60.0f), (float) width / height, 0.1f, 1000.f);
   }
 
   double timer;
@@ -50,7 +61,7 @@ public class Main extends Application {
   @Override
   protected void afterProcess() {
     timer += getDeltaTime() / 1000_000_000.0;
-    if (timer >= 1) {
+    if (timer >= 5) {
       log.debug("fps: {}", getFps());
       timer = 0;
     }

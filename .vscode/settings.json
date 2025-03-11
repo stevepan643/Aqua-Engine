@@ -1,6 +1,6 @@
 {
   "java.configuration.updateBuildConfiguration": "automatic",
-  // "java.debug.settings.vmArgs": "-XstartOnFirstThread",
+  "java.debug.settings.vmArgs": "-XstartOnFirstThread",
   "java.debug.settings.onBuildFailureProceed": true,
   "cSpell.words": [
     "glfw",
