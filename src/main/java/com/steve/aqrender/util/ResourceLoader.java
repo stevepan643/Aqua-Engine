@@ -2,13 +2,16 @@ package com.steve.aqrender.util;
 
 import static org.lwjgl.opengl.GL20.GL_FRAGMENT_SHADER;
 import static org.lwjgl.opengl.GL20.GL_VERTEX_SHADER;
+import static org.lwjgl.stb.STBImage.stbi_load;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.system.MemoryUtil;
 
 /**
  * 资源加载器。
@@ -27,6 +30,7 @@ public class ResourceLoader {
    * 加载着色器。
    *
    * @param identifier 着色器文件
+   * @param type 着色器类型
    * @return 着色器内容
    * @since March 9, 2025
    */
@@ -45,5 +49,11 @@ public class ResourceLoader {
     }
     log.error("Read Failed");
     return "";
+  }
+
+  public static ByteBuffer texture(@NotNull Identifier resource, int width, int height) {
+    // TODO
+
+    return null;
   }
 }
